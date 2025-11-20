@@ -4,9 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class roles extends Model
+class Role extends Model
 {
-    /** @use HasFactory<\Database\Factories\RolesFactory> */
+    
     use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'description',
+    ];
+
+    // Relationships
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class);
+    }
+
+    // Helper method
+    public function users_count(): int
+    {
+        return $this->users()->count();
+    }
 }

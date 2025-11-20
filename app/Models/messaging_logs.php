@@ -4,9 +4,29 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class messaging_logs extends Model
+class MessagingLog extends Model
 {
-    /** @use HasFactory<\Database\Factories\MessagingLogsFactory> */
+    
     use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'type',
+        'recipient',
+        'content',
+        'sent_at',
+        'status',
+    ];
+
+    protected $casts = [
+        'sent_at' => 'datetime',
+    ];
+
+    // Relationships
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }
