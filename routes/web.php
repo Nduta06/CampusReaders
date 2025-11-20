@@ -17,4 +17,10 @@ Route::get('profile', function () {
 Route::get('settings', function () {
     return view('settings');
 });
+Route::get('login', function () {
+    return view('login');
+});
+Route::get('signup', function () {
+    return view('signup');
+});
 
