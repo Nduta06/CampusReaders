@@ -118,11 +118,18 @@
             text-decoration: none;
             font-size: 14px;
             transition: color 0.3s ease;
+            margin: 0 10px;
         }
 
         .login-footer a:hover {
             color: #8b7355;
             text-decoration: underline;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
         }
 
         .input-icon {
@@ -160,6 +167,23 @@
             font-weight: bold;
         }
 
+        .signup-prompt {
+            text-align: center;
+            margin-top: 20px;
+            color: #a08c6c;
+            font-size: 14px;
+        }
+
+        .signup-prompt a {
+            color: #8b7355;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .signup-prompt a:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 480px) {
             .login-container {
                 padding: 30px 25px;
@@ -167,6 +191,11 @@
             
             .login-header h1 {
                 font-size: 24px;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 10px;
             }
         }
     </style>
@@ -212,8 +241,16 @@
             <button type="submit" class="btn-login">Sign In</button>
         </form>
 
+        <!-- ADDED: Sign up prompt -->
+        <div class="signup-prompt">
+            Don't have an account? <a href="/signup">Sign up here</a>
+        </div>
+
         <div class="login-footer">
-            <a href="#">Forgot your password?</a>
+            <div class="footer-links">
+                <a href="#">Forgot your password?</a>
+                <a href="#">Need help?</a>
+            </div>
         </div>
     </div>
 
