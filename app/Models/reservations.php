@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Reservation extends Model
+class reservations extends Model
 {
     use HasFactory;
 
@@ -24,14 +24,14 @@ class Reservation extends Model
     ];
 
     // Relationships
-    public function user(): BelongsTo
+    public function User(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function book(): BelongsTo
+    public function books(): BelongsTo
     {
-        return $this->belongsTo(Book::class);
+        return $this->belongsTo(books::class);
     }
 
     // Helper method

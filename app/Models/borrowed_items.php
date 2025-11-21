@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class BorrowedItem extends Model
+class borrowed_items extends Model
 {
     use HasFactory;
 
@@ -28,14 +28,14 @@ class BorrowedItem extends Model
     ];
 
     // Relationships
-    public function user(): BelongsTo
+    public function User(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function book(): BelongsTo
+    public function books(): BelongsTo
     {
-        return $this->belongsTo(Book::class);
+        return $this->belongsTo(books::class);
     }
 
     public function staff(): BelongsTo
@@ -43,7 +43,7 @@ class BorrowedItem extends Model
         return $this->belongsTo(User::class, 'staff_pickup_id');
     }
 
-    public function fine(): HasOne
+    public function fines(): HasOne
     {
         return $this->hasOne(Fine::class);
     }

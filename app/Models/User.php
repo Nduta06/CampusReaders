@@ -7,58 +7,82 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class User extends Model
+class User extends Authenticatable
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Notifiable;
 
     protected $fillable = [
         'name',
         'email',
         'password',
         'role_id',
-        'remember_token',
+        
     ];
-    
+
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
+
     // Relationships
-    public function role(): BelongsTo
+    public function roles(): BelongsTo
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(roles::class);
     }
 
     public function reservations(): HasMany
     {
-        return $this->hasMany(Reservation::class);
+        return $this->hasMany(reservations::class);
     }
 
     public function waitlists(): HasMany
     {
-        return $this->hasMany(Waitlist::class);
+        return $this->hasMany(waitlists::class);
     }
 
-    public function borrowedItems(): HasMany
+    public function borrowed_items(): HasMany
     {
-        return $this->hasMany(BorrowedItem::class, 'user_id');
+        return $this->hasMany(borrowed_items::class, 'user_id');
     }
 
-    public function processedBorrowedItems(): HasMany
-    {
-        return $this->hasMany(BorrowedItem::class, 'staff_pickup_id');
-    }
 
     public function fines(): HasMany
     {
-        return $this->hasMany(Fine::class);
+        return $this->hasMany(fines::class);
     }
 
-    public function messagingLogs(): HasMany
+    public function messaging_logs(): HasMany
     {
-        return $this->hasMany(MessagingLog::class);
+        return $this->hasMany(messaging_logs::class);
+    }
+
+    // Authorization helper methods
+    public function isAdmin(): bool
+    {
+        return $this->role->name === 'admin';
+    }
+
+    public function isStaff(): bool
+    {
+        return $this->role->name === 'staff';
+    }
+
+    public function isGuest(): bool
+    {
+        return $this->role->name === 'guest';
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return $this->role->name === $role;
     }
 }

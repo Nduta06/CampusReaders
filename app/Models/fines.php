@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Fine extends Model
+class fines extends Model
 {
     use HasFactory;
 
@@ -26,12 +26,12 @@ class Fine extends Model
     ];
 
     // Relationships
-    public function borrowedItem(): BelongsTo
+    public function borrowed_items(): BelongsTo
     {
-        return $this->belongsTo(BorrowedItem::class);
+        return $this->belongsTo(borrowed_items::class);
     }
 
-    public function user(): BelongsTo
+    public function User(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

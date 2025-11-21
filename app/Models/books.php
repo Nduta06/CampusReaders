@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Book extends Model
+class books extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -25,24 +25,24 @@ class Book extends Model
     ];
 
     // Relationships
-    public function category(): BelongsTo
+    public function categories(): BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(categories::class);
     }
 
     public function reservations(): HasMany
     {
-        return $this->hasMany(Reservation::class);
+        return $this->hasMany(reservations::class);
     }
 
     public function waitlists(): HasMany
     {
-        return $this->hasMany(Waitlist::class);
+        return $this->hasMany(waitlists::class);
     }
 
-    public function borrowedItems(): HasMany
+    public function borrowed_Items(): HasMany
     {
-        return $this->hasMany(BorrowedItem::class);
+        return $this->hasMany(borrowed_Items::class);
     }
 
     // Helper methods
