@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BorrowRecord;
-use App\Models\BookReservation;
 use App\Models\borrowed_items;
-use App\Models\Fine;
 use App\Models\fines;
 use App\Models\reservations;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
@@ -63,4 +61,27 @@ class ProfileController extends Controller
 
         return back()->with('success', 'Reservation cancelled!');
     }
+
+    public function edit()
+    {
+        $user = Auth::user();
+        return view('profile_edit', compact('user')); // create profile_edit.blade.php
+    }
+    public function update(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+        ]);
+        
+        return redirect()->route('profile')->with('success', 'Profile updated!');
+    }
+
 }

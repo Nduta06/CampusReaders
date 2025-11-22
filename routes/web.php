@@ -22,6 +22,13 @@ Route::get('/settings', function () {
     return view('settings');
 })->name('settings');
 
+Route::get('/profile/edit', [ProfileController::class, 'edit'])
+    ->name('profile.edit');
+    
+Route::post('/profile/update', [ProfileController::class, 'update'])
+    ->name('profile.update');
+
+
 // Authentication routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
