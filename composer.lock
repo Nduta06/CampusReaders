@@ -4,10 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "425868a474d745d21e77f45693146088",
-
-    "content-hash": "d126b430eaf6ccf43821caf59e8e0fd8",
-
+    "content-hash": "7afcf8b9f645d54ff0a60dc40a817343",
     "packages": [
         {
             "name": "brick/math",
@@ -68,6 +65,32 @@
                 }
             ],
             "time": "2025-08-29T12:40:03+00:00"
+        },
+        {
+            "name": "campusreaders/openlibrary",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "packages/campusreaders/OpenLibrary",
+                "reference": "4a94062bd4b39e56ee8cb66197e2c1dc12056d21"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CampusReaders\\OpenLibrary\\OpenLibraryServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CampusReaders\\OpenLibrary\\": "src/"
+                }
+            },
+            "description": "A Laravel package for interacting with the Open Library API",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "carbonphp/carbon-doctrine-types",
@@ -8530,12 +8553,14 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "campusreaders/openlibrary": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2"
     },
-    "platform-dev": {},
+    "platform-dev": [],
     "plugin-api-version": "2.6.0"
 }

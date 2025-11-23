@@ -1,58 +1,83 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Http\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\books;
+use App\Models\Book; // Your local DB books
 use App\Models\categories;
+use CampusReaders\OpenLibrary\OpenLibrary;
 
 class Catalogue extends Component
 {
     use WithPagination;
 
     public $search = '';
-    public $selectedCategory = null;  // null works better for empty filter
-    public $availability = null;
-    public $sortField = 'title';
-    public $sortDirection = 'asc';
+    public $selectedCategory = '';
+    public $availability = '';
 
-    // Reset pagination on filter/search change
-    public function updatingSearch() { $this->resetPage(); }
-    public function updatedSelectedCategory() { $this->resetPage(); }
-    public function updatedAvailability() { $this->resetPage(); }
+    public $categories = [];
 
-    public function sortBy($field)
+    protected $paginationTheme = 'tailwind';
+    protected $queryString = ['search', 'selectedCategory', 'availability'];
+
+    public function mount()
     {
-        if ($this->sortField === $field) {
-            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->sortField = $field;
-            $this->sortDirection = 'asc';
-        }
+        $this->categories = categories::all(); // Load categories from DB
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSelectedCategory()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingAvailability()
+    {
+        $this->resetPage();
     }
 
     public function render()
     {
-        $categories = categories::orderBy('name')->get();
-
-        $books = books::with('category')
-            ->when($this->search, function ($q) {
+        $dbBooks = Book::query()
+            ->when($this->search, fn($q) =>
                 $q->where('title', 'like', "%{$this->search}%")
                   ->orWhere('author', 'like', "%{$this->search}%")
                   ->orWhere('ISBN', 'like', "%{$this->search}%")
-                  ->orWhere('edition', 'like', "%{$this->search}%")
-                  ->orWhere('publication_year', 'like', "%{$this->search}%");
-            })
-            ->when($this->selectedCategory, function ($q) {
-                $q->where('category_id', $this->selectedCategory);
-            })
-            ->when($this->availability === 'available', function ($q) {
-                $q->where('available_copies', '>', 0);
-            })
-            ->orderBy($this->sortField, $this->sortDirection)
+            )
+            ->when($this->selectedCategory, fn($q) =>
+                $q->where('category_id', $this->selectedCategory)
+            )
+            ->when($this->availability === 'available', fn($q) =>
+                $q->where('available_copies', '>', 0)
+            )
             ->paginate(10);
+        $apiBooks = collect();
+        if (strlen($this->search) >= 3) {
+            $openLibrary = app('openlibrary');
+            $results = $openLibrary->search($this->search);
 
-        return view('livewire.catalogue', compact('books', 'categories'));
+            $apiBooks = collect($results['docs'] ?? [])->map(function ($item) {
+                return (object) [
+                    'title' => $item['title'] ?? 'N/A',
+                    'author' => $item['author_name'][0] ?? 'Unknown',
+                    'ISBN' => $item['isbn'][0] ?? '—',
+                    'edition' => $item['edition_key'][0] ?? '—',
+                    'publication_year' => $item['first_publish_year'] ?? '—',
+                    'category' => (object)['name' => $item['subject'][0] ?? '—'],
+                    'available_copies' => null, // API books don’t track your stock
+                ];
+            });
+        }
+        $mergedBooks = $dbBooks->getCollection()->merge($apiBooks);
+        $dbBooks->setCollection($mergedBooks);
+
+        return view('livewire.catalogue', [
+            'books' => $dbBooks,
+        ]);
     }
 }

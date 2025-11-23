@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "campusreaders/openlibrary": "@dev",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "livewire/livewire": "^3.7",
@@ -84,5 +85,12 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+
+    "repositories": [
+    {
+        "type": "path",
+        "url": "packages/campusreaders/OpenLibrary"
+    }
+]
 }
