@@ -1,63 +1,83 @@
 <?php
-namespace App\Livewire;
+
+namespace App\Http\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\books;
 use App\Models\categories;
+use CampusReaders\OpenLibrary\OpenLibrary;
 
 class Catalogue extends Component
 {
     use WithPagination;
-    
+
     public $search = '';
-    public $selectedCategory = null;
-    public $availability = null;
-    public $sortField = 'title';
-    public $sortDirection = 'asc';
-    
-    // Reset pagination on filter/search change
-    public function updatedSearch() { $this->resetPage(); }
-    public function updatedSelectedCategory() { $this->resetPage(); }
-    public function updatedAvailability() { $this->resetPage(); }
-    
-    public function sortBy($field)
+    public $selectedCategory = '';
+    public $availability = '';
+
+    public $categories = [];
+
+    protected $paginationTheme = 'tailwind';
+    protected $queryString = ['search', 'selectedCategory', 'availability'];
+
+    public function mount()
     {
-        if ($this->sortField === $field) {
-            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->sortField = $field;
-            $this->sortDirection = 'asc';
-        }
+        $this->categories = categories::all(); // Load categories from DB
     }
-    
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSelectedCategory()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingAvailability()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        $categories = categories::orderBy('name')->get();
-        
-        $books = books::with('category')
-            ->when($this->search, function($q) {
-                $q->where(function($query) {
-                    $query->where('title', 'like', "%{$this->search}%")
-                          ->orWhere('author', 'like', "%{$this->search}%")
-                          ->orWhere('ISBN', 'like', "%{$this->search}%")
-                          ->orWhere('edition', 'like', "%{$this->search}%")
-                          ->orWhere('publication_year', 'like', "%{$this->search}%");
-                });
-            })
-            ->when($this->selectedCategory && $this->selectedCategory !== 'all', function($q) {
-                $q->where('category_id', $this->selectedCategory);
-            })
-            ->when($this->availability !== null && $this->availability !== '', function($q) {
-                if ($this->availability === 'available') {
-                    $q->where('available_copies', '>', 0);
-                } elseif ($this->availability === 'unavailable') {
-                    $q->where('available_copies', '=', 0);
-                }
-            })
-            ->orderBy($this->sortField, $this->sortDirection)
+        $dbBooks = books::query()
+            ->when($this->search, fn($q) =>
+                $q->where('title', 'like', "%{$this->search}%")
+                  ->orWhere('author', 'like', "%{$this->search}%")
+                  ->orWhere('ISBN', 'like', "%{$this->search}%")
+            )
+            ->when($this->selectedCategory, fn($q) =>
+                $q->where('category_id', $this->selectedCategory)
+            )
+            ->when($this->availability === 'available', fn($q) =>
+                $q->where('available_copies', '>', 0)
+            )
             ->paginate(10);
-        
-        return view('livewire.catalogue', compact('books', 'categories'));
+        $apiBooks = collect();
+        if (strlen($this->search) >= 3) {
+            $openLibrary = app('openlibrary');
+            $results = $openLibrary->search($this->search);
+
+            $apiBooks = collect($results['docs'] ?? [])->map(function ($item) {
+                return (object) [
+                    'title' => $item['title'] ?? 'N/A',
+                    'author' => $item['author_name'][0] ?? 'Unknown',
+                    'ISBN' => $item['isbn'][0] ?? '—',
+                    'edition' => $item['edition_key'][0] ?? '—',
+                    'publication_year' => $item['first_publish_year'] ?? '—',
+                    'category' => (object)['name' => $item['subject'][0] ?? '—'],
+                    'available_copies' => null, // API books don’t track your stock
+                ];
+            });
+        }
+        $mergedBooks = $dbBooks->getCollection()->merge($apiBooks);
+        $dbBooks->setCollection($mergedBooks);
+
+        return view('livewire.catalogue', [
+            'books' => $dbBooks,
+        ]);
     }
 }
