@@ -56,10 +56,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/settings', function () {
         return view('settings');
     })->name('settings');
+
+    Route::get('/catalogue', function () {
+    return view('catalogue');
+    })->name('catalogue');
     
-    Route::get('/bookcatalogue', function () {
-        return view('bookcatalogue');
-    })->name('bookcatalogue');
 });
 
 // Admin protected routes
