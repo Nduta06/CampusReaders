@@ -1,5 +1,5 @@
 @extends('layout')
 
 @section('content')
-    @livewire('catalogue')
+    <livewire:catalogue />
 @endsection
