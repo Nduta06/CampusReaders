@@ -22,7 +22,6 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            
             $user = Auth::user();
             
             // FIXED: Check role using the relationship and redirect to existing routes

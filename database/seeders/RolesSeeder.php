@@ -1,7 +1,7 @@
 <?php
 
 namespace Database\Seeders;
-use App\Models\roles;
+use App\Models\Role;
 use Illuminate\Support\Facades\Schema;                                                                                                                                                                                                                                                                      
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -15,21 +15,26 @@ class RolesSeeder extends Seeder
     public function run(): void
     {
         Schema::disableForeignKeyConstraints();
-        roles::truncate();
+        Role::truncate();
 
-        $admin = new Roles();
+        $admin = new Role();
         $admin->name = 'Admin';
         $admin->description = 'Administrator with full access';
         $admin->save();
 
-        $staff = new Roles();
+        $staff = new Role();
         $staff->name = 'Staff';
         $staff->description = 'Librarian';
         $staff->save();
 
-        $student = new Roles();
+        $student = new Role();
         $student->name = 'Student';
         $student->description = 'Student user';
         $student->save();
+
+        $guest = new Role();
+        $guest->name = 'guest';
+        $guest->description = 'Guest user';
+        $guest->save();
     }
 }

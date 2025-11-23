@@ -13,7 +13,8 @@ class BorrowedItemsController extends Controller
      */
     public function index()
     {
-        //
+        $borrowedItems = \App\Models\BorrowedItem::with(['books', 'user'])->get();
+        return view('borrowed-items.index', compact('borrowedItems'));
     }
 
     /**

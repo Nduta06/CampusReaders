@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorewaitlistsRequest;
 use App\Http\Requests\UpdatewaitlistsRequest;
-use App\Models\waitlists;
+use App\Models\Waitlist;
 
 class WaitlistsController extends Controller
 {
@@ -13,7 +13,8 @@ class WaitlistsController extends Controller
      */
     public function index()
     {
-        //
+        $waitlists = \App\Models\Waitlist::with(['book', 'user'])->get();
+        return view('waitlists.index', compact('waitlists'));
     }
 
     /**
@@ -35,7 +36,7 @@ class WaitlistsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(waitlists $waitlists)
+    public function show(Waitlist $waitlist)
     {
         //
     }
@@ -43,7 +44,7 @@ class WaitlistsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(waitlists $waitlists)
+    public function edit(Waitlist $waitlist)
     {
         //
     }
@@ -51,7 +52,7 @@ class WaitlistsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatewaitlistsRequest $request, waitlists $waitlists)
+    public function update(UpdatewaitlistsRequest $request, Waitlist $waitlist)
     {
         //
     }
@@ -59,7 +60,7 @@ class WaitlistsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(waitlists $waitlists)
+    public function destroy(Waitlist $waitlist)
     {
         //
     }

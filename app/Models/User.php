@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo; // <--- Import this
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\MessagingLog;
 
 class User extends Authenticatable
 {
@@ -54,6 +55,6 @@ class User extends Authenticatable
     public function role(): BelongsTo
     {
         // We specify 'roleId' because the DB column is camelCase
-        return $this->belongsTo(roles::class, 'roleId');
+        return $this->belongsTo(Role::class, 'roleId');
     }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\Books;
+use App\Models\Category;
 use App\Models\Book; // Your local DB books
 use App\Models\categories;
 use CampusReaders\OpenLibrary\OpenLibrary;
@@ -38,6 +40,10 @@ class Catalogue extends Component
 
     public function updatingAvailability()
     {
+        $categories = Category::orderBy('name')->get();
+
+        $books = Books::with('category')
+            ->when($this->search, function ($q) {
         $this->resetPage();
     }
 
