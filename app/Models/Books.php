@@ -43,7 +43,7 @@ class Books extends Model
 
     public function borrowed_Items(): HasMany
     {
-        return $this->hasMany(borrowed_Items::class);
+        return $this->hasMany(BorrowedItem::class);
     }
 
     // Helper methods

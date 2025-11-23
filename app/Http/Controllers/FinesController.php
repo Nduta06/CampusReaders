@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorefinesRequest;
 use App\Http\Requests\UpdatefinesRequest;
-use App\Models\fines;
+use App\Models\Fine;
 
 class FinesController extends Controller
 {
@@ -13,7 +13,8 @@ class FinesController extends Controller
      */
     public function index()
     {
-        //
+        $fines = \App\Models\Fine::with(['User', 'borrowed_items'])->get();
+        return view('fines.index', compact('fines'));
     }
 
     /**
@@ -35,7 +36,7 @@ class FinesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(fines $fines)
+    public function show(Fine $fine)
     {
         //
     }
@@ -43,7 +44,7 @@ class FinesController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(fines $fines)
+    public function edit(Fine $fine)
     {
         //
     }
@@ -51,7 +52,7 @@ class FinesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatefinesRequest $request, fines $fines)
+    public function update(UpdatefinesRequest $request, Fine $fine)
     {
         //
     }
@@ -59,7 +60,7 @@ class FinesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(fines $fines)
+    public function destroy(Fine $fine)
     {
         //
     }

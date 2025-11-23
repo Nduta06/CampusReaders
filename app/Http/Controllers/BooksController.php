@@ -35,7 +35,14 @@ class BooksController extends Controller
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
+            'ISBN' => 'required|string|max:255|unique:books,ISBN',
+            'edition' => 'required|string|max:255',
+            'publication_year' => 'required|integer',
+            'total_copies' => 'required|integer|min:0',
         ]);
+        // Set available_copies to total_copies on creation
+        $validated['available_copies'] = $validated['total_copies'];
+        $validated['manual_sync_flag'] = false;
         \App\Models\Books::create($validated);
         return redirect()->route('books.index')->with('success', 'Book created successfully.');
     }
@@ -66,8 +73,17 @@ class BooksController extends Controller
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
+            'total_copies' => 'required|integer|min:0',
         ]);
+        // If total_copies is changed, adjust available_copies accordingly
+        if (isset($validated['total_copies'])) {
+            $diff = $validated['total_copies'] - $book->total_copies;
+            $book->available_copies += $diff;
+            $book->total_copies = $validated['total_copies'];
+            unset($validated['total_copies']);
+        }
         $book->update($validated);
+        $book->save();
         return redirect()->route('books.index')->with('success', 'Book updated successfully.');
     }
 
