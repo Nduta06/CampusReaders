@@ -19,7 +19,7 @@ class Role extends Model
     // Relationships
     public function User(): HasMany
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(User::class, 'roleId');
     }
 
     // Helper method

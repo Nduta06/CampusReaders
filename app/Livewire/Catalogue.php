@@ -11,6 +11,16 @@ class Catalogue extends Component
 {
     use WithPagination;
 
+    protected $paginationTheme = 'tailwind';
+
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'selectedCategory' => ['except' => ''],
+        'availability' => ['except' => ''],
+        'sortField' => ['except' => 'title'],
+        'sortDirection' => ['except' => 'asc'],
+    ];
+
     public $search = '';
     public $selectedCategory = '';
     public $availability = '';
@@ -18,6 +28,16 @@ class Catalogue extends Component
     public $sortDirection = 'asc';
 
     public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSelectedCategory()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingAvailability()
     {
         $this->resetPage();
     }
@@ -44,12 +64,12 @@ class Catalogue extends Component
                   ->orWhere('edition', 'like', "%{$this->search}%")
                   ->orWhere('publication_year', 'like', "%{$this->search}%");
             })
-            ->when($this->selectedCategory, function ($q) {
-                $q->where('category_id', $this->selectedCategory);
-            })
-            ->when($this->availability === 'available', function ($q) {
-                $q->where('available_copies', '>', 0);
-            })
+            ->when($this->selectedCategory, fn($q) => 
+                $q->where('category_id', $this->selectedCategory)
+            )
+            ->when($this->availability === 'available', fn($q) =>
+                $q->where('available_copies', '>', 0)
+            )
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate(10);
 

@@ -22,6 +22,24 @@
     color: #fff;
     text-decoration: none;
 }
+.btn-pay-stripe {
+    border-radius: 50px;
+    font-weight: 600;
+    padding: 0.4rem 1.1rem;
+    font-size: 0.95rem;
+    color: #fff;
+    background: #f57c00;
+    border: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.btn-pay-stripe:hover {
+    background: #fb8c00;
+    color: #fff;
+    text-decoration: none;
+}
 .card-custom {
     background: #f5f5dc;
     color: #111;
@@ -33,6 +51,7 @@
 .table-responsive { padding: 1rem; }
 .mt-3 { margin-top: 1rem !important; }
 </style>
+
 <div class="container-fluid">
     <div class="row mb-4">
         <div class="col-12">
@@ -63,22 +82,35 @@
                                 <td>{{ $fine->book->title ?? 'N/A' }}</td>
                                 <td>{{ number_format($fine->amount, 2) }}</td>
                                 <td>
-                                    @if($fine->status === 'paid')
+                                    @if($fine->status === 'Paid')
                                         <span class="badge bg-success">Paid</span>
                                     @else
                                         <span class="badge bg-warning text-dark">Unpaid</span>
                                     @endif
                                 </td>
                                 <td>{{ $fine->created_at->format('Y-m-d H:i') }}</td>
-                                <td>
-                                    @if($fine->status !== 'paid')
-                                    <form action="{{ route('fines.update', $fine) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('PUT')
-                                        <input type="hidden" name="mark_paid" value="1">
-                                        <button type="submit" class="btn btn-update-status btn-sm">Mark Paid</button>
-                                    </form>
+                                <td class="d-flex flex-wrap gap-2">
+                                    @if($fine->status !== 'Paid')
+                                        <!-- Stripe Pay Button -->
+                                        <form action="{{ route('fines.pay', $fine) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-pay-stripe btn-sm">
+                                                Pay with Stripe
+                                            </button>
+                                        </form>
+
+                                        <!-- Mark Paid (Admin Manual) -->
+                                        <form action="{{ route('fines.update', $fine) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('PUT')
+                                            <input type="hidden" name="mark_paid" value="1">
+                                            <button type="submit" class="btn btn-update-status btn-sm">
+                                                Mark Paid
+                                            </button>
+                                        </form>
                                     @endif
+                                    
+                                    <!-- Delete Fine -->
                                     <form action="{{ route('fines.destroy', $fine) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this fine?');">
                                         @csrf
                                         @method('DELETE')
