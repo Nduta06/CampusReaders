@@ -14,9 +14,9 @@ Route::get('/admin', function () {
     return view('admin');
 })->name('admin');
 
-Route::get('/bookcatalogue', function () {
-    return view('bookcatalogue');
-})->name('bookcatalogue');
+Route::get('/catalogue', function () {
+    return view('catalogue');
+});
 
 Route::get('/profile/edit', [ProfileController::class, 'edit'])
     ->name('profile.edit');

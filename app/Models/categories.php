@@ -12,13 +12,13 @@ class categories extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
+        'name', 'description'
     ];
 
     // Relationships
     public function books(): HasMany
     {
-        return $this->hasMany(Book::class);
+        return $this->hasMany(books::class);
     }
 
     // Helper method
