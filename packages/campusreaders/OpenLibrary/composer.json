@@ -1,0 +1,16 @@
+{
+  "name": "campusreaders/openlibrary",
+  "description": "A Laravel package for interacting with the Open Library API",
+  "autoload": {
+    "psr-4": {
+      "CampusReaders\\OpenLibrary\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "CampusReaders\\OpenLibrary\\OpenLibraryServiceProvider"
+      ]
+    }
+  }
+}
