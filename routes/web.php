@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SignupController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\FinesController; 
 
 Route::get('/', function () {
     return view('welcome');
@@ -16,11 +17,6 @@ Route::get('/admin', function () {
 Route::get('/bookcatalogue', function () {
     return view('bookcatalogue');
 })->name('bookcatalogue');
-
-
-Route::get('/settings', function () {
-    return view('settings');
-})->name('settings');
 
 Route::get('/profile/edit', [ProfileController::class, 'edit'])
     ->name('profile.edit');
@@ -48,6 +44,14 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/profile/cancel-reservation/{reservation}', [ProfileController::class, 'cancelReservation'])
         ->name('profile.cancelReservation');
+
+    // --- Payment Routes (Added) ---
+    Route::post('/fines/{fine}/pay', [FinesController::class, 'pay'])
+        ->name('fines.pay');
+
+    Route::get('/fines/{fine}/success', [FinesController::class, 'paymentSuccess'])
+        ->name('fines.success');
+    // ------------------------------
     
     Route::get('/settings', function () {
         return view('settings');
