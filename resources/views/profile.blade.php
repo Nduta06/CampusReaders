@@ -54,7 +54,15 @@
         @if($fines->count())
             <ul class="list-disc list-inside">
                 @foreach($fines as $fine)
-                    <li>{{ $fine->description }} — ${{ number_format($fine->amount, 2) }} — Status: {{ $fine->status }}</li>
+                    <li>
+    {{ $fine->description }} — ${{ number_format($fine->amount, 2) }} 
+    @if($fine->status !== 'Paid')
+        <form action="{{ route('fines.pay', $fine->id) }}" method="POST" class="inline">
+            @csrf
+            <button type="submit" class="text-green-400 hover:underline ml-2">Pay Now</button>
+        </form>
+    @endif
+</li>
                 @endforeach
             </ul>
         @else

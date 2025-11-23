@@ -14,23 +14,48 @@
             <p>Join our library community today</p>
         </div>
 
+        {{-- NEW: Display General Errors (like Database connection issues) --}}
+        @if ($errors->any())
+            <div class="mb-4 p-3 bg-red-100 text-red-700 rounded border border-red-300">
+                <strong>Something went wrong:</strong>
+                <ul class="list-disc pl-5 mt-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <form id="signupForm" method="POST" action="/signup">
             @csrf
             <div class="form-group">
                 <label for="name">Full Name</label>
                 <div class="input-icon">
-                    <input type="text" id="name" name="name" class="form-control" placeholder="Enter your full name" required>
-                    <i>👤</i>
+                    {{-- ADDED: value="{{ old('name') }}" to keep text after error --}}
+                    <input type="text" id="name" name="name" class="form-control" 
+                           placeholder="Enter your full name" 
+                           value="{{ old('name') }}" required>
+                    <i>側</i>
                 </div>
+                {{-- ADDED: Server-side error message --}}
+                @error('name')
+                    <div class="error-message" style="display:block">{{ $message }}</div>
+                @enderror
                 <div class="error-message" id="nameError"></div>
             </div>
 
             <div class="form-group">
                 <label for="email">Email Address</label>
                 <div class="input-icon">
-                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" required>
-                    <i>📧</i>
+                    <input type="email" id="email" name="email" class="form-control" 
+                           placeholder="Enter your email" 
+                           value="{{ old('email') }}" required>
+                    <i>透</i>
                 </div>
+                {{-- ADDED: Server-side error message --}}
+                @error('email')
+                    <div class="error-message" style="display:block">{{ $message }}</div>
+                @enderror
                 <div class="error-message" id="emailError"></div>
             </div>
 
@@ -38,11 +63,15 @@
                 <label for="password">Password</label>
                 <div class="input-icon">
                     <input type="password" id="password" name="password" class="form-control" placeholder="Create a password" required>
-                    <i>🔒</i>
+                    <i>白</i>
                 </div>
                 <div class="password-requirements">
                     Must be at least 8 characters with letters and numbers
                 </div>
+                {{-- ADDED: Server-side error message --}}
+                @error('password')
+                    <div class="error-message" style="display:block">{{ $message }}</div>
+                @enderror
                 <div class="error-message" id="passwordError"></div>
             </div>
 
@@ -50,7 +79,7 @@
                 <label for="password_confirmation">Confirm Password</label>
                 <div class="input-icon">
                     <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" placeholder="Confirm your password" required>
-                    <i>🔒</i>
+                    <i>白</i>
                 </div>
                 <div class="error-message" id="confirmPasswordError"></div>
             </div>
@@ -66,7 +95,6 @@
 
 <script>
     document.getElementById('signupForm').addEventListener('submit', function(e) {
-        e.preventDefault();
         
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
@@ -75,9 +103,12 @@
         
         let isValid = true;
         
-        // Reset error messages
+        // Reset JS error messages
         document.querySelectorAll('.error-message').forEach(el => {
-            el.style.display = 'none';
+             // Only hide if it's NOT a server error (server errors have specific text)
+             if(!el.textContent.includes('taken') && !el.textContent.includes('match')) {
+                 el.style.display = 'none';
+             }
         });
         
         // Name validation
@@ -96,6 +127,7 @@
         }
         
         // Password validation
+        // NOTE: Ensure this regex matches your own password requirements!
         const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
         if (!passwordRegex.test(password)) {
             document.getElementById('passwordError').textContent = 'Password must be at least 8 characters with letters and numbers';
@@ -110,10 +142,10 @@
             isValid = false;
         }
         
-        if (isValid) {
-            // Form is valid, submit it
-            this.submit();
+        if (!isValid) {
+            e.preventDefault(); // Stop submission ONLY if JS validation fails
         }
+        // If isValid is true, we let the form submit naturally to the server
     });
 
     // Real-time validation

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Database\Factories\BooksFactory; // <--- 1. Import the Factory
 
 class books extends Model
 {
@@ -23,6 +24,13 @@ class books extends Model
         'available_copies',
         'manual_sync_flag',
     ];
+
+    // --- 2. Add this method to link the Model to the correct Factory ---
+    protected static function newFactory()
+    {
+        return BooksFactory::new();
+    }
+    // ------------------------------------------------------------------
 
     // Relationships
     public function categories(): BelongsTo
