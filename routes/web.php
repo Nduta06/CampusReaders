@@ -38,8 +38,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/settings', fn () => view('settings'))->name('settings');
 });
 
-// Admin routes (all authenticated users during development)
-Route::middleware(['auth'])->prefix('admin')->group(function () {
+// Admin routes (no auth middleware for testing)
+Route::prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
     Route::resource('users', UserController::class);

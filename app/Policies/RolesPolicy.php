@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\roles;
+use App\Models\Role;
 use Illuminate\Auth\Access\Response;
 
 class RolesPolicy
@@ -13,15 +13,17 @@ class RolesPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        // Allow all for testing
+        return true;
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, roles $roles): bool
+    public function view(User $user, Role $roles): bool
     {
-        return false;
+        // Allow all for testing
+        return true;
     }
 
     /**
@@ -29,38 +31,43 @@ class RolesPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        // Allow all for testing
+        return true;
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, roles $roles): bool
+    public function update(User $user, Role $roles): bool
     {
-        return false;
+        // Allow all for testing
+        return true;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, roles $roles): bool
+    public function delete(User $user, Role $roles): bool
     {
-        return false;
+        // Allow all for testing
+        return true;
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, roles $roles): bool
+    public function restore(User $user, Role $roles): bool
     {
-        return false;
+        // Allow all for testing
+        return true;
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, roles $roles): bool
+    public function forceDelete(User $user, Role $roles): bool
     {
-        return false;
+        // Allow all for testing
+        return true;
     }
 }

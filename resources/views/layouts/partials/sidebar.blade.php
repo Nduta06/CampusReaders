@@ -85,7 +85,7 @@
         <li class="nav-header">User Management</li>
         {{-- Roles --}}
         <li class="nav-item">
-          <a href="{{ route('roles.index') }}" class="nav-link {{ request()->is('admin/roles*') ? 'active' : '' }}">
+          <a href="{{ url('admin/roles') }}" class="nav-link {{ request()->is('admin/roles*') ? 'active' : '' }}">
             <i class="nav-icon bi bi-shield-lock"></i>
             <span>Roles</span>
           </a>
