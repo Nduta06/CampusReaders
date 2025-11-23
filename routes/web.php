@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\SignupController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\FinesController; // <--- Added this import
+use App\Http\Controllers\FinesController; 
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,11 +17,6 @@ Route::get('/admin', function () {
 Route::get('/bookcatalogue', function () {
     return view('bookcatalogue');
 })->name('bookcatalogue');
-
-
-Route::get('/settings', function () {
-    return view('settings');
-})->name('settings');
 
 Route::get('/profile/edit', [ProfileController::class, 'edit'])
     ->name('profile.edit');
