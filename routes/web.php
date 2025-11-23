@@ -18,11 +18,6 @@ Route::get('/catalogue', function () {
     return view('catalogue');
 });
 
-Route::get('/profile/edit', [ProfileController::class, 'edit'])
-    ->name('profile.edit');
-    
-Route::post('/profile/update', [ProfileController::class, 'update'])
-    ->name('profile.update');
 
 
 // Authentication routes
@@ -44,6 +39,12 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/profile/cancel-reservation/{reservation}', [ProfileController::class, 'cancelReservation'])
         ->name('profile.cancelReservation');
+    
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+    
+    Route::post('/profile/update', [ProfileController::class, 'update'])
+        ->name('profile.update');
 
     // --- Payment Routes (Added) ---
     Route::post('/fines/{fine}/pay', [FinesController::class, 'pay'])
@@ -58,7 +59,7 @@ Route::middleware(['auth'])->group(function () {
     })->name('settings');
 
     Route::get('/catalogue', function () {
-    return view('catalogue');
+        return view('catalogue');
     })->name('catalogue');
     
 });

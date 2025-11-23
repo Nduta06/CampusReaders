@@ -12,15 +12,15 @@ class Catalogue extends Component
     use WithPagination;
 
     public $search = '';
-    public $selectedCategory = '';
-    public $availability = '';
+    public $selectedCategory = null;  // null works better for empty filter
+    public $availability = null;
     public $sortField = 'title';
     public $sortDirection = 'asc';
 
-    public function updatingSearch()
-    {
-        $this->resetPage();
-    }
+    // Reset pagination on filter/search change
+    public function updatingSearch() { $this->resetPage(); }
+    public function updatedSelectedCategory() { $this->resetPage(); }
+    public function updatedAvailability() { $this->resetPage(); }
 
     public function sortBy($field)
     {
@@ -37,7 +37,7 @@ class Catalogue extends Component
         $categories = categories::orderBy('name')->get();
 
         $books = books::with('category')
-            ->where(function ($q) {
+            ->when($this->search, function ($q) {
                 $q->where('title', 'like', "%{$this->search}%")
                   ->orWhere('author', 'like', "%{$this->search}%")
                   ->orWhere('ISBN', 'like', "%{$this->search}%")

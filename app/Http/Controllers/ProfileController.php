@@ -14,22 +14,31 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
+        // Auto-expire reservations past their expiration date
+        reservations::where('status', 'active')
+            ->where('expires_at', '<', now())
+            ->update(['status' => 'completed']);
+
+        // Current borrowed books
         $currentBorrows = borrowed_items::where('user_id', $user->id)
             ->whereNull('return_date')
             ->with('book')
             ->get();
 
+        // Borrowing history
         $history = borrowed_items::where('user_id', $user->id)
             ->whereNotNull('return_date')
             ->with('book')
             ->orderBy('return_date', 'desc')
             ->get();
 
+        // Active reservations
         $reservations = reservations::where('user_id', $user->id)
             ->where('status', 'active')
             ->with('book')
             ->get();
 
+        // Unpaid fines
         $fines = fines::where('user_id', $user->id)
             ->where('status', 'unpaid')
             ->get();
@@ -43,9 +52,9 @@ class ProfileController extends Controller
         ));
     }
 
+    // Extend borrowed book due date
     public function renew(borrowed_items $record)
     {
-        // Extend due date
         $record->update([
             'due_date' => now()->addDays(7)
         ]);
@@ -53,20 +62,45 @@ class ProfileController extends Controller
         return back()->with('success', 'Book renewed for 7 more days!');
     }
 
+    // Cancel a reservation
     public function cancelReservation(reservations $reservation)
     {
+        if ($reservation->status !== 'active') {
+            return back()->with('error', 'Reservation cannot be cancelled.');
+        }
+
         $reservation->update([
-            'status' => 'cancelled'
+            'status' => 'cancelled',
+            'cancelled_at' => now() // optional timestamp
         ]);
 
         return back()->with('success', 'Reservation cancelled!');
     }
 
+    // Mark fine as paid
+    public function payFine(fines $fine)
+    {
+        if ($fine->status !== 'unpaid') {
+            return back()->with('error', 'Fine is already paid.');
+        }
+
+        $fine->update([
+            'status' => 'paid',
+            'amount_paid' => $fine->amount_due,
+            'paid_at' => now() // optional timestamp
+        ]);
+
+        return back()->with('success', 'Fine paid successfully!');
+    }
+
+    // Profile edit view
     public function edit()
     {
         $user = Auth::user();
-        return view('profile_edit', compact('user')); // create profile_edit.blade.php
+        return view('profile_edit', compact('user'));
     }
+
+    // Update profile info
     public function update(Request $request)
     {
         $user = Auth::user();
@@ -83,5 +117,4 @@ class ProfileController extends Controller
         
         return redirect()->route('profile')->with('success', 'Profile updated!');
     }
-
 }

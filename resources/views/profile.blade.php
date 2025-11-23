@@ -3,11 +3,11 @@
 @section('title', 'My Profile')
 
 @section('content')
-<div class="container mx-auto py-8">
+<div class="container mx-auto py-8 space-y-8">
     <h1 class="text-3xl font-bold mb-6">Hello, {{ Auth::user()->name }}!</h1>
 
     <!-- Profile Info -->
-    <div class="bg-gray-800 p-6 rounded-lg shadow mb-8">
+    <div class="bg-gray-800 p-6 rounded-lg shadow">
         <h2 class="text-xl font-semibold mb-4">Profile Info</h2>
         <p><strong>Email:</strong> {{ Auth::user()->email }}</p>
         <p><strong>Member Since:</strong> {{ Auth::user()->created_at->format('M d, Y') }}</p>
@@ -15,12 +15,18 @@
     </div>
 
     <!-- Current Borrows -->
-    <div class="bg-gray-800 p-6 rounded-lg shadow mb-8">
+    <div class="bg-gray-800 p-6 rounded-lg shadow">
         <h2 class="text-xl font-semibold mb-4">Current Borrowed Books</h2>
         @if($currentBorrows->count())
-            <ul class="list-disc list-inside">
+            <ul class="divide-y divide-gray-700">
                 @foreach($currentBorrows as $borrow)
-                    <li>{{ $borrow->book->title }} — Due: {{ $borrow->due_date->format('M d, Y') }}</li>
+                    <li class="py-2 flex justify-between items-center">
+                        <span>{{ $borrow->book->title }} — Due: {{ $borrow->due_date->format('M d, Y') }}</span>
+                        <form action="{{ route('profile.renew', $borrow->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="px-3 py-1 bg-cyan-500 text-white rounded hover:bg-cyan-600 transition">Renew +7 days</button>
+                        </form>
+                    </li>
                 @endforeach
             </ul>
         @else
@@ -29,16 +35,17 @@
     </div>
 
     <!-- Reservations -->
-    <div class="bg-gray-800 p-6 rounded-lg shadow mb-8">
+    <div class="bg-gray-800 p-6 rounded-lg shadow">
         <h2 class="text-xl font-semibold mb-4">Your Reservations</h2>
         @if($reservations->count())
-            <ul class="list-disc list-inside">
+            <ul class="divide-y divide-gray-700">
                 @foreach($reservations as $reservation)
-                    <li>{{ $reservation->book->title }} — Reserved on: {{ $reservation->created_at->format('M d, Y') }}
-                        <form action="{{ route('profile.cancelReservation', $reservation->id) }}" method="POST" class="inline">
+                    <li class="py-2 flex justify-between items-center">
+                        <span>{{ $reservation->book->title }} — Reserved on: {{ $reservation->created_at->format('M d, Y') }}</span>
+                        <form action="{{ route('profile.cancelReservation', $reservation->id) }}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="text-red-500 hover:underline ml-2">Cancel</button>
+                            <button type="submit" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">Cancel</button>
                         </form>
                     </li>
                 @endforeach
@@ -52,17 +59,19 @@
     <div class="bg-gray-800 p-6 rounded-lg shadow">
         <h2 class="text-xl font-semibold mb-4">Fines</h2>
         @if($fines->count())
-            <ul class="list-disc list-inside">
+            <ul class="divide-y divide-gray-700">
                 @foreach($fines as $fine)
-                    <li>
-    {{ $fine->description }} — ${{ number_format($fine->amount, 2) }} 
-    @if($fine->status !== 'Paid')
-        <form action="{{ route('fines.pay', $fine->id) }}" method="POST" class="inline">
-            @csrf
-            <button type="submit" class="text-green-400 hover:underline ml-2">Pay Now</button>
-        </form>
-    @endif
-</li>
+                    <li class="py-2 flex justify-between items-center">
+                        <span>${{ number_format($fine->amount_due, 2) }} — Incurred: {{ $fine->incurred_on->format('M d, Y') }}</span>
+                        @if($fine->status === 'Pending')
+                            <form action="{{ route('fines.pay', $fine->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition">Pay Now</button>
+                            </form>
+                        @else
+                            <span class="px-2 py-1 bg-gray-600 text-gray-200 rounded">Paid</span>
+                        @endif
+                    </li>
                 @endforeach
             </ul>
         @else

@@ -29,11 +29,11 @@ class LoginController extends Controller
             if ($user->role->name === 'admin') {
                 return redirect()->route('admin'); // Goes to /admin
             } elseif ($user->role->name === 'staff') {
-                return redirect()->route('bookcatalogue'); // Goes to /bookcatalogue
+                return redirect()->route('catalogue'); // Goes to /bookcatalogue
             }
 
             // Regular users (guest role) go to book catalogue
-            return redirect()->route('bookcatalogue'); // Goes to /bookcatalogue
+            return redirect()->route('catalogue'); // Goes to /bookcatalogue
         }
 
         return back()->withErrors([
