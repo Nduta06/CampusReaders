@@ -49,6 +49,6 @@ class BorrowedItem extends Model
 
     public function fine(): HasOne
     {
-        return $this->hasOne(fines::class);
+        return $this->hasOne(Fine::class);
     }
 }

@@ -33,7 +33,7 @@
                                 </tr>
                                 <tr>
                                     <th style="color: #1a237e;">Role</th>
-                                    <td style="color: #111;">{{ $user->role->name ?? '—' }}</td>
+                                    <td style="color: #111;">{{ $user->role->id ?? '—' }}</td>
                                 </tr>
                                 <tr>
                                     <th style="color: #1a237e;">Created</th>

@@ -65,7 +65,8 @@
         left: 0;
         z-index: 100;
         background: #23272b;
-        box-shadow: 2px 0 8px rgba(90,74,58,0.04);
+
+        box-shadow: none !important;
       }
       .app-main {
         flex: 1;
