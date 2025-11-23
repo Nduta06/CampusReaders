@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Reservation;
 
 class Books extends Model
 {
@@ -25,19 +26,19 @@ class Books extends Model
     ];
 
     // Relationships
-    public function categories(): BelongsTo
+    public function category(): BelongsTo
     {
-        return $this->belongsTo(categories::class);
+        return $this->belongsTo(Category::class);
     }
 
     public function reservations(): HasMany
     {
-        return $this->hasMany(reservations::class);
+        return $this->hasMany(Reservation::class);
     }
 
     public function waitlists(): HasMany
     {
-        return $this->hasMany(waitlists::class);
+        return $this->hasMany(Waitlist::class);
     }
 
     public function borrowed_Items(): HasMany
