@@ -6,8 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\Fine;
+use App\Models\User;
+use App\Models\Books;
 
-class borrowed_items extends Model
+class BorrowedItem extends Model
 {
     use HasFactory;
 
@@ -20,6 +23,7 @@ class borrowed_items extends Model
         'return_date',
         'status',
     ];
+    // File renamed to BorrowedItem.php. Please update class name to BorrowedItem.
 
     protected $casts = [
         'borrow_date' => 'date',

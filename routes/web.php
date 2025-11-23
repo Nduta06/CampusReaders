@@ -8,9 +8,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/admin', function () {
-    return view('admin');
-})->name('admin');
+
+// Admin dashboard route (protected)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
+});
 
 Route::get('/bookcatalogue', function () {
     return view('bookcatalogue');
@@ -50,6 +52,11 @@ Route::middleware(['auth'])->group(function () {
 // Admin protected routes
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin', function () {
-        return view('admin');
+        // Pass books to the admin view
+        $books = \App\Models\books::all();
+        return view('admin', compact('books'));
     })->name('admin');
+
+    // Books CRUD resource routes
+    Route::resource('books', App\Http\Controllers\BooksController::class);
 });

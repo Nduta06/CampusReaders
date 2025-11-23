@@ -5,8 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Books;
 
-class categories extends Model
+class Category extends Model
 {
     
     use HasFactory;
@@ -18,7 +19,7 @@ class categories extends Model
     // Relationships
     public function books(): HasMany
     {
-        return $this->hasMany(Book::class);
+        return $this->hasMany(Books::class);
     }
 
     // Helper method

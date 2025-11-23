@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\books;
+use App\Models\Books;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -17,3 +17,4 @@ class BooksSeeder extends Seeder
        books::factory(20)->create();
     }
 }
+    

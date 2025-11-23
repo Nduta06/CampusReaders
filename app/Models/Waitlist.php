@@ -6,37 +6,37 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class reservations extends Model
+class Waitlist extends Model
 {
+    
     use HasFactory;
 
     protected $fillable = [
         'user_id',
         'book_id',
-        'reserved_at',
-        'expires_at',
+        'position',
+        'joined_at',
         'status',
     ];
 
     protected $casts = [
-        'reserved_at' => 'datetime',
-        'expires_at' => 'datetime',
+        'joined_at' => 'datetime',
     ];
 
     // Relationships
-    public function User(): BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function books(): BelongsTo
+    public function book(): BelongsTo
     {
-        return $this->belongsTo(books::class);
+        return $this->belongsTo(Books::class);
     }
 
     // Helper method
-    public function isExpired(): bool
+    public function isActive(): bool
     {
-        return $this->expires_at->isPast();
+        return $this->status === 'Active';
     }
 }
