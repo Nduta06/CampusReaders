@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\roles; 
 use App\Models\User;
-use App\Models\Role;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class SignupController extends Controller
 {
@@ -17,28 +18,41 @@ class SignupController extends Controller
 
     public function signup(Request $request)
     {
-        // Validate user data
-        $data = $request->validate([
+        // 1. Validate the incoming data
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        // AUTHORIZATION: Assign 'guest' role by default to new users
-        $guestRole = Role::where('name', 'guest')->first();
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
-        // Create user
+        $data = $request->all();
+
+        $guestRole = roles::where('name', 'Student')->first();
+        
+        if (!$guestRole) {
+            $guestRole = roles::where('name', 'Guest')->first();
+        }
+        
+        // Safety check: if no roles exist at all
+        if (!$guestRole) {
+            return redirect()->back()->withErrors(['error' => 'System Error: The "Student" role does not exist in the database. Please run seeders.']);
+        }
+
+        // 3. Create the user
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'role_id' => $guestRole->id,
+            'roleId' => $guestRole->id, // camelCase 'roleId' matches your DB column
         ]);
 
-        // AUTHENTICATION: Automatically log the user in after signup
+        // 4. Log the user in and redirect
         Auth::login($user);
 
-        // Redirect to book catalogue (guest users)
-        return redirect()->route('bookcatalogue');
+        return redirect()->route('catalogue');
     }
 }

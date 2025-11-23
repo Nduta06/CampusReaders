@@ -3,24 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Library System')</title>
+    <title>@yield('title', 'CampusReaders - Library Management System')</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    @livewireStyles
     <style>
-        /* Reset and Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --beige: #f5f1e8;
+            --dark-beige: #e8e2d1;
+            --accent-beige: #d4c9b4;
+            --white: #ffffff;
+            --text-dark: #3a3a3a;
+            --text-light: #5a5a5a;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f1e6 0%, #e8dfca 100%);
-            min-height: 100vh;
-            color: #5a4a3a;
+            background-color: var(--beige);
+            color: var(--text-dark);
             line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Common Container Styles */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            color: var(--accent-beige);
+            font-size: 28px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-light);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-beige);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-login {
+            background-color: transparent;
+            color: var(--text-dark);
+            border: 1px solid var(--accent-beige);
+        }
+
+        .btn-login:hover {
+            background-color: var(--dark-beige);
+        }
+
+        .btn-signup {
+            background-color: var(--accent-beige);
+            color: var(--text-dark);
+        }
+
+        .btn-signup:hover {
+            background-color: var(--dark-beige);
+            transform: translateY(-2px);
+        }
+
+        .btn-logout {
+            background-color: transparent;
+            color: var(--text-dark);
+            border: 1px solid var(--accent-beige);
+        }
+
+        .btn-logout:hover {
+            background-color: #ffeaea;
+        }
+
+        /* Auth Container Styles */
         .auth-container {
             display: flex;
             align-items: center;
@@ -30,34 +145,32 @@
         }
 
         .auth-card {
-            background: #fffaf0;
+            background: var(--white);
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(175, 150, 120, 0.15);
+            box-shadow: var(--shadow);
             width: 100%;
             max-width: 420px;
-            border: 1px solid #e8dfca;
+            border: 1px solid var(--dark-beige);
         }
 
-        /* Header Styles */
         .auth-header {
             text-align: center;
             margin-bottom: 35px;
         }
 
         .auth-header h1 {
-            color: #8b7355;
+            color: var(--text-dark);
             font-size: 28px;
             font-weight: 300;
             margin-bottom: 8px;
         }
 
         .auth-header p {
-            color: #a08c6c;
+            color: var(--text-light);
             font-size: 14px;
         }
 
-        /* Form Styles */
         .form-group {
             margin-bottom: 25px;
         }
@@ -65,7 +178,7 @@
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            color: #8b7355;
+            color: var(--text-dark);
             font-weight: 500;
             font-size: 14px;
         }
@@ -73,30 +186,28 @@
         .form-control {
             width: 100%;
             padding: 14px 16px;
-            border: 2px solid #e8dfca;
+            border: 2px solid var(--dark-beige);
             border-radius: 12px;
-            background: #fffaf0;
+            background: var(--white);
             font-size: 15px;
             transition: all 0.3s ease;
-            color: #5a4a3a;
+            color: var(--text-dark);
         }
 
         .form-control:focus {
             outline: none;
-            border-color: #c8b8a0;
-            background: #fff;
-            box-shadow: 0 0 0 3px rgba(200, 184, 160, 0.1);
+            border-color: var(--accent-beige);
+            box-shadow: 0 0 0 3px rgba(212, 201, 180, 0.1);
         }
 
         .form-control::placeholder {
-            color: #b8a995;
+            color: var(--text-light);
         }
 
-        /* Button Styles */
         .btn-auth {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #a08c6c 0%, #8b7355 100%);
+            background: linear-gradient(135deg, var(--accent-beige) 0%, #8b7355 100%);
             color: white;
             border: none;
             border-radius: 12px;
@@ -113,20 +224,15 @@
             box-shadow: 0 5px 15px rgba(139, 115, 85, 0.3);
         }
 
-        .btn-auth:active {
-            transform: translateY(0);
-        }
-
-        /* Link and Prompt Styles */
         .auth-prompt {
             text-align: center;
             margin-top: 20px;
-            color: #a08c6c;
+            color: var(--text-light);
             font-size: 14px;
         }
 
         .auth-prompt a {
-            color: #8b7355;
+            color: var(--accent-beige);
             text-decoration: none;
             font-weight: 500;
         }
@@ -135,32 +241,6 @@
             text-decoration: underline;
         }
 
-        .auth-footer {
-            text-align: center;
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid #e8dfca;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .footer-links a {
-            color: #a08c6c;
-            text-decoration: none;
-            font-size: 14px;
-            transition: color 0.3s ease;
-        }
-
-        .footer-links a:hover {
-            color: #8b7355;
-            text-decoration: underline;
-        }
-
-        /* Input Icon Styles */
         .input-icon {
             position: relative;
         }
@@ -170,47 +250,11 @@
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: #b8a995;
+            color: var(--text-light);
         }
 
         .input-icon .form-control {
             padding-left: 45px;
-        }
-
-        /* Logo Styles */
-        .logo {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .logo-circle {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #a08c6c 0%, #8b7355 100%);
-            border-radius: 50%;
-            margin: 0 auto 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        /* Error and Helper Text Styles */
-        .password-requirements {
-            font-size: 12px;
-            color: #a08c6c;
-            margin-top: 5px;
-            margin-left: 5px;
-        }
-
-        .error-message {
-            color: #d32f2f;
-            font-size: 12px;
-            margin-top: 5px;
-            margin-left: 5px;
-            display: none;
         }
 
         /* Alert Styles */
@@ -233,8 +277,48 @@
             color: #16a34a;
         }
 
+        /* Main Content Area */
+        main {
+            flex: 1;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-beige);
+            padding: 40px 0;
+            text-align: center;
+            color: var(--text-light);
+            margin-top: auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-dark);
+        }
+
         /* Responsive Design */
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+
             .auth-card {
                 padding: 30px 25px;
             }
@@ -242,29 +326,6 @@
             .auth-header h1 {
                 font-size: 24px;
             }
-            
-            .footer-links {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .form-control {
-                padding: 12px 14px;
-            }
-            
-            .btn-auth {
-                padding: 12px;
-            }
-        }
-
-        /* Focus Animations */
-        .input-icon {
-            transition: transform 0.2s ease;
-        }
-
-        .form-control:focus + i,
-        .input-icon:hover {
-            transform: scale(1.02);
         }
     </style>
     
@@ -272,13 +333,83 @@
     @yield('styles')
 </head>
 <body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <a href="{{ url('/') }}" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-book-open logo-icon"></i>
+                        <span class="logo-text">CampusReaders</span>
+                    </a>
+                </div>
+                
+                @auth
+                    <div class="nav-links">
+                        <a href="{{ route('catalogue') }}">Book Catalogue</a>
+                        <a href="{{ route('profile') }}">My Profile</a>
+                        @can('admin')
+                            <a href="{{ route('admin') }}">Admin</a>
+                        @endcan
+                    </div>
+                    <div class="auth-buttons">
+                        <span style="color: var(--text-light); margin-right: 15px;">Welcome, {{ Auth::user()->name }}</span>
+                        <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                            @csrf
+                            <button type="submit" class="btn btn-logout">Logout</button>
+                        </form>
+                    </div>
+                @else
+                    <div class="auth-buttons">
+                        <a href="{{ route('login') }}" class="btn btn-login">Log In</a>
+                        <a href="{{ route('signup') }}" class="btn btn-signup">Sign Up</a>
+                    </div>
+                @endauth
+            </nav>
+        </div>
+    </header>
+
 
     <!-- Main Content -->
     <main>
+        <!-- Display Success/Error Messages -->
+        @if(session('success'))
+            <div class="container">
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="container">
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="container">
+                <div class="alert alert-danger">
+                    <ul style="margin: 0; padding-left: 20px;">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        @endif
+
         @yield('content')
     </main>
 
-    <!-- Page-specific Scripts -->
-    @yield('scripts')
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 CampusReaders. All rights reserved.</p>
+        </div>
+    </footer>
+@livewireScripts
 </body>
 </html>

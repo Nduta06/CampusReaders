@@ -5,33 +5,64 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorefinesRequest;
 use App\Http\Requests\UpdatefinesRequest;
 use App\Models\Fine;
+use Illuminate\Http\Request;
+use Stripe\Stripe;
+use Stripe\Checkout\Session;
 
 class FinesController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Initiate the Stripe Payment
      */
-    public function index()
+    public function pay(Fine $fine)
     {
-        $fines = \App\Models\Fine::with(['User', 'borrowed_items'])->get();
-        return view('fines.index', compact('fines'));
+        // 1. Set API Key from .env
+        Stripe::setApiKey(config('services.stripe.secret'));
+
+        // 2. Calculate remaining balance (Stripe expects amount in cents)
+        $amountToPay = ($fine->amount_due - $fine->amount_paid) * 100;
+
+        // 3. Create Checkout Session
+        $session = Session::create([
+            'payment_method_types' => ['card'],
+            'line_items' => [[
+                'price_data' => [
+                    'currency' => 'usd',
+                    'product_data' => [
+                        'name' => 'Library Fine Payment',
+                        'description' => 'Fine for borrowed item #' . $fine->borrowed_item_id,
+                    ],
+                    'unit_amount' => $amountToPay,
+                ],
+                'quantity' => 1,
+            ]],
+            'mode' => 'payment',
+            // These routes must be defined in web.php
+            'success_url' => route('fines.success', ['fine' => $fine->id]) . '?session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url' => route('profile'),
+        ]);
+
+        return redirect($session->url);
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Handle Successful Payment
      */
-    public function create()
+    public function paymentSuccess(Request $request, Fine $fine)
     {
-        //
+        // In a production app, you would verify the session_id with Stripe here.
+        
+        // Update the fine status in the database
+        $fine->update([
+            'amount_paid' => $fine->amount_due, // Mark as fully paid
+            'status' => 'Paid',
+            'amount_due' => 0
+        ]);
+
+        return redirect()->route('profile')->with('success', 'Fine paid successfully!');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorefinesRequest $request)
-    {
-        //
-    }
+    // --- Existing Resource Methods (Left empty as placeholders) ---
 
     /**
      * Display the specified resource.

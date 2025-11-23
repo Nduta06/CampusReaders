@@ -39,7 +39,7 @@ class BorrowedItem extends Model
 
     public function books(): BelongsTo
     {
-        return $this->belongsTo(books::class);
+        return $this->belongsTo(Books::class);
     }
 
     public function staff(): BelongsTo
@@ -47,7 +47,7 @@ class BorrowedItem extends Model
         return $this->belongsTo(User::class, 'staff_pickup_id');
     }
 
-    public function fines(): HasOne
+    public function fine(): HasOne
     {
         return $this->hasOne(Fine::class);
     }
