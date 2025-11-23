@@ -53,6 +53,6 @@ class SignupController extends Controller
         // 4. Log the user in and redirect
         Auth::login($user);
 
-        return redirect()->route('bookcatalogue');
+        return redirect()->route('catalogue');
     }
 }

@@ -346,7 +346,7 @@
                 
                 @auth
                     <div class="nav-links">
-                        <a href="{{ route('bookcatalogue') }}">Book Catalogue</a>
+                        <a href="{{ route('catalogue') }}">Book Catalogue</a>
                         <a href="{{ route('profile') }}">My Profile</a>
                         @can('admin')
                             <a href="{{ route('admin') }}">Admin</a>

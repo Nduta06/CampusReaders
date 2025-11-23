@@ -15,14 +15,14 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         $currentBorrows = borrowed_items::where('user_id', $user->id)
-            ->whereNull('returned_at')
+            ->whereNull('return_date')
             ->with('book')
             ->get();
 
         $history = borrowed_items::where('user_id', $user->id)
-            ->whereNotNull('returned_at')
+            ->whereNotNull('return_date')
             ->with('book')
-            ->orderBy('returned_at', 'desc')
+            ->orderBy('return_date', 'desc')
             ->get();
 
         $reservations = reservations::where('user_id', $user->id)

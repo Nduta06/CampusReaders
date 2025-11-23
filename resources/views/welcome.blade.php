@@ -196,7 +196,7 @@
                 <p>Your comprehensive library management system designed for educational institutions. Streamline book tracking, manage members, and enhance the reading experience for students and faculty.</p>
                 
                 @auth
-                    <a href="{{ route('bookcatalogue') }}" class="btn-get-started">Browse Books <i class="fas fa-arrow-right"></i></a>
+                    <a href="{{ route('catalogue') }}" class="btn-get-started">Browse Books <i class="fas fa-arrow-right"></i></a>
                 @else
                     <a href="{{ route('signup') }}" class="btn-get-started">Get Started <i class="fas fa-arrow-right"></i></a>
                 @endauth
