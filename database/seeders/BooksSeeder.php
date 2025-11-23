@@ -13,8 +13,8 @@ class BooksSeeder extends Seeder
      */
     public function run(): void
     {
-       books::truncate();
-       books::factory(20)->create();
+       Books::truncate();
+       Books::factory(100)->create();
     }
 }
     

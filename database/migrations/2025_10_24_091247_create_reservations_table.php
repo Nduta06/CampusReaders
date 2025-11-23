@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('book_id')->constrained('books');
             $table->timestamp('reserved_at');
             $table->timestamp('expires_at');
-            $table->string('status "Pending/Confirmed/Expired"')->default('Pending');
+            $table->string('status')->default('Pending');
             $table->timestamps();
         });
     }
