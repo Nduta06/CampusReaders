@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorereservationsRequest;
 use App\Http\Requests\UpdatereservationsRequest;
-use App\Models\reservations;
+use App\Models\Reservation;
 
 class ReservationsController extends Controller
 {
@@ -13,7 +13,8 @@ class ReservationsController extends Controller
      */
     public function index()
     {
-        //
+        $reservations = \App\Models\Reservation::with(['book', 'user'])->get();
+        return view('reservations.index', compact('reservations'));
     }
 
     /**
@@ -35,7 +36,7 @@ class ReservationsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(reservations $reservations)
+    public function show(Reservation $reservation)
     {
         //
     }
@@ -43,7 +44,7 @@ class ReservationsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(reservations $reservations)
+    public function edit(Reservation $reservation)
     {
         //
     }
@@ -51,7 +52,7 @@ class ReservationsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatereservationsRequest $request, reservations $reservations)
+    public function update(UpdatereservationsRequest $request, Reservation $reservation)
     {
         //
     }
@@ -59,7 +60,7 @@ class ReservationsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(reservations $reservations)
+    public function destroy(Reservation $reservation)
     {
         //
     }

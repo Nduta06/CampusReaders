@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Storemessaging_logsRequest;
 use App\Http\Requests\Updatemessaging_logsRequest;
-use App\Models\messaging_logs;
+use App\Models\MessagingLog;
 
 class MessagingLogsController extends Controller
 {
@@ -13,7 +13,8 @@ class MessagingLogsController extends Controller
      */
     public function index()
     {
-        //
+        $messagingLogs = \App\Models\MessagingLog::with('User')->get();
+        return view('messaging-logs.index', compact('messagingLogs'));
     }
 
     /**
@@ -35,7 +36,7 @@ class MessagingLogsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(messaging_logs $messaging_logs)
+    public function show(MessagingLog $messaging_log)
     {
         //
     }
@@ -43,7 +44,7 @@ class MessagingLogsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(messaging_logs $messaging_logs)
+    public function edit(MessagingLog $messaging_log)
     {
         //
     }
@@ -51,7 +52,7 @@ class MessagingLogsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Updatemessaging_logsRequest $request, messaging_logs $messaging_logs)
+    public function update(Updatemessaging_logsRequest $request, MessagingLog $messaging_log)
     {
         //
     }
@@ -59,7 +60,7 @@ class MessagingLogsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(messaging_logs $messaging_logs)
+    public function destroy(MessagingLog $messaging_log)
     {
         //
     }

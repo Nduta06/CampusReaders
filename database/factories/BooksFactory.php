@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Category;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\books>
@@ -25,7 +26,7 @@ class BooksFactory extends Factory
             'total_copies' => $this->faker->numberBetween(1, 20),
             'available_copies' => $this->faker->numberBetween(1, 10),
             'manual_sync_flag' => $this->faker->boolean(),
-            'category_id' => 2,
+            'category_id' => Category::inRandomOrder()->first()->id,
 
         ];
     }

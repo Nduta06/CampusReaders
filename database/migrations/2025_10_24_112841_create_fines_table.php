@@ -18,7 +18,7 @@ return new class extends Migration
             $table->decimal('amount_due',10,2);
             $table->decimal('amount_paid',10,2);
             $table->date('incurred_on');
-            $table->string('status "Pending/Paid"');
+            $table->string('status')->default('unpaid');
             $table->timestamps();
         });
     }

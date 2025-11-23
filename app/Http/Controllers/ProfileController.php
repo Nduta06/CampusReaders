@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\borrowed_items;
-use App\Models\fines;
-use App\Models\reservations;
+use App\Models\BorrowedItem;
+use App\Models\Fine;
+use App\Models\Reservation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -15,31 +15,31 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         // Auto-expire reservations past their expiration date
-        reservations::where('status', 'active')
+        Reservation::where('status', 'active')
             ->where('expires_at', '<', now())
             ->update(['status' => 'completed']);
 
         // Current borrowed books
-        $currentBorrows = borrowed_items::where('user_id', $user->id)
+        $currentBorrows = BorrowedItem::where('user_id', $user->id)
             ->whereNull('return_date')
             ->with('book')
             ->get();
 
         // Borrowing history
-        $history = borrowed_items::where('user_id', $user->id)
+        $history = BorrowedItem::where('user_id', $user->id)
             ->whereNotNull('return_date')
             ->with('book')
             ->orderBy('return_date', 'desc')
             ->get();
 
         // Active reservations
-        $reservations = reservations::where('user_id', $user->id)
+        $reservations = Reservation::where('user_id', $user->id)
             ->where('status', 'active')
             ->with('book')
             ->get();
 
         // Unpaid fines
-        $fines = fines::where('user_id', $user->id)
+        $fines = Fine::where('user_id', $user->id)
             ->where('status', 'unpaid')
             ->get();
 
@@ -53,7 +53,7 @@ class ProfileController extends Controller
     }
 
     // Extend borrowed book due date
-    public function renew(borrowed_items $record)
+    public function renew(BorrowedItem $record)
     {
         $record->update([
             'due_date' => now()->addDays(7)
@@ -63,7 +63,7 @@ class ProfileController extends Controller
     }
 
     // Cancel a reservation
-    public function cancelReservation(reservations $reservation)
+    public function cancelReservation(Reservation $reservation)
     {
         if ($reservation->status !== 'active') {
             return back()->with('error', 'Reservation cannot be cancelled.');
@@ -78,7 +78,7 @@ class ProfileController extends Controller
     }
 
     // Mark fine as paid
-    public function payFine(fines $fine)
+    public function payFine(Fine $fine)
     {
         if ($fine->status !== 'unpaid') {
             return back()->with('error', 'Fine is already paid.');

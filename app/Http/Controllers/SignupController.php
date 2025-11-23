@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\roles; 
+use App\Models\Role; 
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,10 +31,10 @@ class SignupController extends Controller
 
         $data = $request->all();
 
-        $guestRole = roles::where('name', 'Student')->first();
+        $guestRole = Role::where('name', 'Student')->first();
         
         if (!$guestRole) {
-            $guestRole = roles::where('name', 'Guest')->first();
+            $guestRole = Role::where('name', 'Guest')->first();
         }
         
         // Safety check: if no roles exist at all

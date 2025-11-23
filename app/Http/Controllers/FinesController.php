@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\fines;
+use App\Http\Requests\StorefinesRequest;
+use App\Http\Requests\UpdatefinesRequest;
+use App\Models\Fine;
 use Illuminate\Http\Request;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
@@ -12,13 +14,13 @@ class FinesController extends Controller
     /**
      * Initiate the Stripe Payment
      */
-    public function pay(fines $fine)
+    public function pay(Fine $fine)
     {
         // 1. Set API Key from .env
         Stripe::setApiKey(config('services.stripe.secret'));
 
         // 2. Calculate remaining balance (Stripe expects amount in cents)
-        $amountToPay = ($fine->amount_due - $fine->amount_paid) * 100; 
+        $amountToPay = ($fine->amount_due - $fine->amount_paid) * 100;
 
         // 3. Create Checkout Session
         $session = Session::create([
@@ -46,7 +48,7 @@ class FinesController extends Controller
     /**
      * Handle Successful Payment
      */
-    public function paymentSuccess(Request $request, fines $fine)
+    public function paymentSuccess(Request $request, Fine $fine)
     {
         // In a production app, you would verify the session_id with Stripe here.
         
@@ -54,7 +56,7 @@ class FinesController extends Controller
         $fine->update([
             'amount_paid' => $fine->amount_due, // Mark as fully paid
             'status' => 'Paid',
-            'amount_due' => 0 
+            'amount_due' => 0
         ]);
 
         return redirect()->route('profile')->with('success', 'Fine paid successfully!');
@@ -62,11 +64,35 @@ class FinesController extends Controller
 
     // --- Existing Resource Methods (Left empty as placeholders) ---
 
-    public function index() {}
-    public function create() {}
-    public function store(Request $request) {}
-    public function show(fines $fines) {}
-    public function edit(fines $fines) {}
-    public function update(Request $request, fines $fines) {}
-    public function destroy(fines $fines) {}
+    /**
+     * Display the specified resource.
+     */
+    public function show(Fine $fine)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Fine $fine)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UpdatefinesRequest $request, Fine $fine)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Fine $fine)
+    {
+        //
+    }
 }
