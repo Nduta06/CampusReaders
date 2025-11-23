@@ -37,14 +37,17 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be cast.
+     * Get the attributes that should be cast.
      *
-     * @var array<string, string>
+     * @return array<string, string>
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
 
     /**
      * Relationship to the Roles model
@@ -53,51 +56,5 @@ class User extends Authenticatable
     {
         // We specify 'roleId' because the DB column is camelCase
         return $this->belongsTo(Role::class, 'roleId');
-    }
-
-    public function reservations()
-    {
-        return $this->hasMany(Reservation::class);
-    }
-
-    public function waitlists()
-    {
-        return $this->hasMany(Waitlist::class);
-    }
-
-    public function borrowed_items()
-    {
-        return $this->hasMany(BorrowedItem::class, 'user_id');
-    }
-
-    public function fines()
-    {
-        return $this->hasMany(Fine::class);
-    }
-
-    public function messaging_logs()
-    {
-        return $this->hasMany(MessagingLog::class);
-    }
-
-    // Authorization helper methods
-    public function isAdmin(): bool
-    {
-        return $this->role && $this->role->name === 'admin';
-    }
-
-    public function isStaff(): bool
-    {
-        return $this->role && $this->role->name === 'staff';
-    }
-
-    public function isGuest(): bool
-    {
-        return $this->role && $this->role->name === 'guest';
-    }
-
-    public function hasRole(string $role): bool
-    {
-        return $this->role && $this->role->name === $role;
     }
 }

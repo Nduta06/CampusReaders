@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Database\Factories\BooksFactory; 
 use App\Models\Reservation;
-use Database\Factories\BooksFactory; // <--- 1. Import the Factory
+ // <--- 1. Import the Factory
 
 class Books extends Model
 {
@@ -26,11 +27,13 @@ class Books extends Model
         'manual_sync_flag',
     ];
 
-    // --- 2. Add this method to link the Model to the correct Factory ---
+    
     protected static function newFactory()
     {
         return BooksFactory::new();
     }
+    // ------------------------------------------------------------------
+
     // ------------------------------------------------------------------
 
     // Relationships

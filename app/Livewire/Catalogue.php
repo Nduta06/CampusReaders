@@ -4,23 +4,23 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\books;
-use App\Models\categories;
+use App\Models\Books;
+use App\Models\Category;
 
 class Catalogue extends Component
 {
     use WithPagination;
 
     public $search = '';
-    public $selectedCategory = '';
-    public $availability = '';
+    public $selectedCategory = null;  // null works better for empty filter
+    public $availability = null;
     public $sortField = 'title';
     public $sortDirection = 'asc';
 
-    public function updatingSearch()
-    {
-        $this->resetPage();
-    }
+    // Reset pagination on filter/search change
+    public function updatingSearch() { $this->resetPage(); }
+    public function updatedSelectedCategory() { $this->resetPage(); }
+    public function updatedAvailability() { $this->resetPage(); }
 
     public function sortBy($field)
     {
@@ -34,10 +34,10 @@ class Catalogue extends Component
 
     public function render()
     {
-        $categories = categories::orderBy('name')->get();
+        $categories = Category::orderBy('name')->get();
 
-        $books = books::with('category')
-            ->where(function ($q) {
+        $books = Books::with('category')
+            ->when($this->search, function ($q) {
                 $q->where('title', 'like', "%{$this->search}%")
                   ->orWhere('author', 'like', "%{$this->search}%")
                   ->orWhere('ISBN', 'like', "%{$this->search}%")

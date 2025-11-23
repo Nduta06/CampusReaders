@@ -2,7 +2,20 @@
 
     <!-- Search + Filters -->
     <div class="flex flex-wrap gap-4 mb-4">
+        <div class="flex gap-2 mb-2">
+    @if($selectedCategory)
+        <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded">
+            Category: {{ $categories->firstWhere('id', $selectedCategory)->name }}
+        </span>
+    @endif
 
+    @if($availability === 'available')
+        <span class="px-2 py-1 bg-green-100 text-green-800 rounded">
+            Available Only
+        </span>
+    @endif
+    </div>
+   
         <input type="text"
                wire:model="search"
                placeholder="Search title, author, ISBN..."

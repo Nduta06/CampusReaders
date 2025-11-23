@@ -369,7 +369,6 @@
         </div>
     </header>
 
-
     <!-- Main Content -->
     <main>
         <!-- Display Success/Error Messages -->

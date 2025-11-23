@@ -20,20 +20,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Public book catalogue (viewable by guests)
-Route::get('/bookcatalogue', function () {
-    return view('bookcatalogue');
-})->name('bookcatalogue');
-
-// Admin landing page
 Route::get('/admin', function () {
     return view('admin');
 })->name('admin');
 
-// Public catalogue (alternative route)
 Route::get('/catalogue', function () {
     return view('catalogue');
-})->name('catalogue');
+});
+
+
 
 // Profile edit/update
 Route::get('/profile/edit', [ProfileController::class, 'edit'])
@@ -58,6 +53,12 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/profile/cancel-reservation/{reservation}', [ProfileController::class, 'cancelReservation'])
         ->name('profile.cancelReservation');
+    
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+    
+    Route::post('/profile/update', [ProfileController::class, 'update'])
+        ->name('profile.update');
 
     // --- Payment Routes (Added) ---
     Route::post('/fines/{fine}/pay', [FinesController::class, 'pay'])
@@ -66,7 +67,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/fines/{fine}/success', [FinesController::class, 'paymentSuccess'])
         ->name('fines.success');
     // ------------------------------
-
+    
     Route::get('/settings', function () {
         return view('settings');
     })->name('settings');
@@ -74,6 +75,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/catalogue', function () {
         return view('catalogue');
     })->name('catalogue');
+    
 });
 
 // Admin routes (no auth middleware for testing)
