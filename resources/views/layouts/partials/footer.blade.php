@@ -10,7 +10,7 @@
   <!--begin::Copyright-->
   <strong>
     Copyright &copy; {{ date('Y') }}&nbsp;
-    <a href="#" class="text-decoration-none">Thibitisha</a>.
+    <a href="#" class="text-decoration-none">CampusReaders</a>.
   </strong>
   All rights reserved.
   <!--end::Copyright-->
