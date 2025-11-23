@@ -31,5 +31,10 @@ class RolesSeeder extends Seeder
         $student->name = 'Student';
         $student->description = 'Student user';
         $student->save();
+
+        $guest = new Role();
+        $guest->name = 'guest';
+        $guest->description = 'Guest user';
+        $guest->save();
     }
 }

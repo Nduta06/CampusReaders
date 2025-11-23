@@ -22,18 +22,15 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            
             $user = Auth::user();
-            
-            // FIXED: Check role using the relationship and redirect to existing routes
-            if ($user->role->name === 'admin') {
-                return redirect()->route('admin'); // Goes to /admin
-            } elseif ($user->role->name === 'staff') {
-                return redirect()->route('bookcatalogue'); // Goes to /bookcatalogue
+
+            // Redirect admin (role_id == 1) to admin dashboard
+            if ($user->role_id == 1) {
+                return redirect()->route('admin.dashboard');
             }
 
-            // Regular users (guest role) go to book catalogue
-            return redirect()->route('bookcatalogue'); // Goes to /bookcatalogue
+            // All other users go to book catalogue
+            return redirect()->route('bookcatalogue');
         }
 
         return back()->withErrors([

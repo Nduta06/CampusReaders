@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\MessagingLog;
 
 class User extends Authenticatable
 {
@@ -34,35 +35,35 @@ class User extends Authenticatable
     ];
 
     // Relationships
-    public function roles(): BelongsTo
+    public function role(): BelongsTo
     {
-        return $this->belongsTo(roles::class);
+        return $this->belongsTo(Role::class);
     }
 
     public function reservations(): HasMany
     {
-        return $this->hasMany(reservations::class);
+        return $this->hasMany(Reservation::class);
     }
 
     public function waitlists(): HasMany
     {
-        return $this->hasMany(waitlists::class);
+        return $this->hasMany(Waitlist::class);
     }
 
     public function borrowed_items(): HasMany
     {
-        return $this->hasMany(borrowed_items::class, 'user_id');
+        return $this->hasMany(BorrowedItem::class, 'user_id');
     }
 
 
     public function fines(): HasMany
     {
-        return $this->hasMany(fines::class);
+        return $this->hasMany(Fine::class);
     }
 
     public function messaging_logs(): HasMany
     {
-        return $this->hasMany(messaging_logs::class);
+        return $this->hasMany(MessagingLog::class);
     }
 
     // Authorization helper methods

@@ -272,6 +272,7 @@
     @yield('styles')
 </head>
 <body>
+
     <!-- Main Content -->
     <main>
         @yield('content')
