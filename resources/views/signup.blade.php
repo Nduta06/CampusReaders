@@ -190,7 +190,7 @@
         }
         
         // Password validation
-        const passwordRegex = /^(?=.[A-Za-z])(?=.\d).{8,}$/;
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
         if (!passwordRegex.test(password)) {
             document.getElementById('passwordError').textContent = 'Password must be at least 8 characters with letters and numbers';
             document.getElementById('passwordError').style.display = 'block';
@@ -228,7 +228,8 @@
     document.getElementById('password').addEventListener('input', function() {
         const password = this.value;
         const errorElement = document.getElementById('passwordError');
-        const passwordRegex = /^(?=.[A-Za-z])(?=.\d).{8,}$/;
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+
         
         if (!passwordRegex.test(password) && password.length > 0) {
             errorElement.textContent = 'Password must be at least 8 characters with letters and numbers';

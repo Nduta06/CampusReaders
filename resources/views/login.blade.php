@@ -15,7 +15,7 @@
                 @csrf
                 
                 <!-- Email Address -->
-                <div class="form-group" style="margin-bottom: 24px;">
+                <div class="form-group" style="margin-bottom: px;">
                     <label style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-light); margin-bottom: 8px; display: block;">Email Address</label>
                     <div style="position: relative;">
                         <i class="fas fa-envelope" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--beige-600);"></i>
