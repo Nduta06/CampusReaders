@@ -30,8 +30,14 @@
 
             <button type="submit" class="btn-auth">Sign In</button>
 
-            <div class="auth-prompt">
-                Don't have an account? <a href="{{ route('signup') }}">Sign up here</a>
+        <!-- ADDED: Sign up prompt -->
+        <div class="signup-prompt">
+            Don't have an account? <a href="/signup">Sign up here</a>
+        </div>
+
+        <div class="login-footer">
+            <div class="footer-links">
+                <a href="#">Forgot your password?</a>
             </div>
         </form>
     </div>
