@@ -32,11 +32,44 @@
 .table tbody td { color: #111; }
 .table-responsive { padding: 1rem; }
 .mt-3 { margin-top: 1rem !important; }
+
+.btn-issue-book {
+    background: linear-gradient(135deg, #1a237e 0%, #283593 100%); /* Subtle gradient */
+    color: white !important;
+    padding: 10px 24px;
+    border-radius: 50px; 
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(26, 35, 126, 0.2); /* Soft shadow */
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px; 
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.btn-issue-book:hover {
+    background: linear-gradient(135deg, #283593 0%, #3949ab 100%);
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 20px rgba(26, 35, 126, 0.3);
+}
+
+.btn-issue-book svg {
+    width: 20px;
+    height: 20px;
+}
 </style>
 <div class="container-fluid">
     <div class="row mb-4">
-        <div class="col-12">
-            <h3 class="fw-bold mb-0">Borrowed Items</h3>
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <h3 class="fw-bold mb-0" style="color: #1a237e;">Borrowed Items</h3>
+        
+        <a href="{{ route('borrowed-items.create') }}" class="btn-issue-book">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Issue New Book
+        </a>
         </div>
     </div>
     <div class="row">
