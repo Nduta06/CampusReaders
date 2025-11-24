@@ -5,6 +5,7 @@
 @section('content')
 <div class="auth-container">
     <div class="auth-card">
+
         <div class="auth-header">
             <h1>Create Account</h1>
             <p>Join CampusReaders today</p>
