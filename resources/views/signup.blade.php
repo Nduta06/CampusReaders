@@ -5,7 +5,6 @@
 @section('content')
 <div class="auth-container">
     <div class="auth-card">
-
         <div class="auth-header">
             <h1>Create Account</h1>
             <p>Join CampusReaders today</p>
@@ -52,6 +51,16 @@
                             <div class="role-info">
                                 <div class="role-title">Staff</div>
                                 <div class="role-desc">Manage books and library operations</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="role-option">
+                        <input type="radio" id="role_admin" name="role" value="admin" {{ old('role') == 'admin' ? 'checked' : '' }} required>
+                        <label for="role_admin" class="role-label">
+                            <div class="role-icon">⚙️</div>
+                            <div class="role-info">
+                                <div class="role-title">Administrator</div>
+                                <div class="role-desc">Full system access and management</div>
                             </div>
                         </label>
                     </div>
