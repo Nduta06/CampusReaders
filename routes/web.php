@@ -15,27 +15,12 @@ use App\Http\Controllers\MessagingLogsController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\ProfileController;
 
-// Public Homepage
+// --- 1. Public Routes ---
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/admin', function () {
-    return view('admin');
-})->name('admin');
-
-Route::get('/catalogue', function () {
-    return view('catalogue');
-});
-
-
-
-// Profile edit/update
-Route::get('/profile/edit', [ProfileController::class, 'edit'])
-    ->name('profile.edit');
-Route::post('/profile/update', [ProfileController::class, 'update'])
-    ->name('profile.update');
-// Authentication routes
+// Authentication
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
@@ -43,48 +28,44 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/signup', [SignupController::class, 'showSignupForm'])->name('signup');
 Route::post('/signup', [SignupController::class, 'signup']);
 
-// Protected Routes (must be logged in)
+// --- 2. Protected Routes (Logged-in Users) ---
 Route::middleware(['auth'])->group(function () {
-    Route::get('/profile', [ProfileController::class, 'index'])
-        ->name('profile');
-
-    Route::post('/books/{book}/borrow', [BorrowedItemsController::class, 'borrow'])
-        ->name('books.borrow');
-
-    Route::post('/profile/renew/{record}', [ProfileController::class, 'renew'])
-        ->name('profile.renew');
-
-    Route::post('/profile/cancel-reservation/{reservation}', [ProfileController::class, 'cancelReservation'])
-        ->name('profile.cancelReservation');
     
-    Route::get('/profile/edit', [ProfileController::class, 'edit'])
-        ->name('profile.edit');
-    
-    Route::post('/profile/update', [ProfileController::class, 'update'])
-        ->name('profile.update');
+    // Dashboard / Profile
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/renew/{record}', [ProfileController::class, 'renew'])->name('profile.renew');
+    Route::post('/profile/cancel-reservation/{reservation}', [ProfileController::class, 'cancelReservation'])->name('profile.cancelReservation');
 
-    // --- Payment Routes (Added) ---
-    Route::post('/fines/{fine}/pay', [FinesController::class, 'pay'])
-        ->name('fines.pay');
+    // Fines & Payments
+    Route::post('/fines/{fine}/pay', [FinesController::class, 'pay'])->name('fines.pay');
+    Route::get('/fines/{fine}/success', [FinesController::class, 'paymentSuccess'])->name('fines.success');
 
-    Route::get('/fines/{fine}/success', [FinesController::class, 'paymentSuccess'])
-        ->name('fines.success');
-    // ------------------------------
+    // Catalogue & Borrowing
+    // This defines the route name 'catalogue' used in your redirects
+    Route::get('/catalogue', function () {
+        return view('catalogue');
+    })->name('catalogue');
+
+    // This defines the POST route for borrowing a book
+    Route::post('/books/{book}/borrow', [BorrowedItemsController::class, 'borrow'])->name('books.borrow');
     
     Route::get('/settings', function () {
         return view('settings');
     })->name('settings');
-
-    Route::get('/catalogue', function () {
-        return view('catalogue');
-    })->name('catalogue');
-    
 });
 
-// Admin routes (no auth middleware for testing)
-Route::prefix('admin')->group(function () {
+// --- 3. Admin Routes ---
+// Admin routes should generally be protected by 'auth' AND 'role:admin'
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/', function () {
+        return view('admin');
+    })->name('admin');
+
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
+    // Resource Routes
     Route::resource('users', UserController::class);
     Route::resource('books', BooksController::class);
     Route::resource('categories', CategoriesController::class);

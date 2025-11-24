@@ -6,13 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use App\Models\Fine;
-use App\Models\User;
-use App\Models\Books;
 
 class BorrowedItem extends Model
 {
     use HasFactory;
+
+    protected $table = 'borrowed_items'; // Good practice to be explicit
 
     protected $fillable = [
         'user_id',
@@ -23,7 +22,6 @@ class BorrowedItem extends Model
         'return_date',
         'status',
     ];
-    // File renamed to BorrowedItem.php. Please update class name to BorrowedItem.
 
     protected $casts = [
         'borrow_date' => 'date',
@@ -31,15 +29,18 @@ class BorrowedItem extends Model
         'return_date' => 'date',
     ];
 
-    // Relationships
-    public function User(): BelongsTo
+    // --- Relationships ---
+
+    // 1. Rename 'User' to 'user' (lowercase is standard)
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function books(): BelongsTo
+    // 2. THIS IS THE FIX: Rename 'books' to 'book' (Singular)
+    public function book(): BelongsTo
     {
-        return $this->belongsTo(Books::class);
+        return $this->belongsTo(Books::class, 'book_id');
     }
 
     public function staff(): BelongsTo

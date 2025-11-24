@@ -51,12 +51,12 @@ class BorrowedItemsController extends Controller
             return back()->withErrors(['book_id' => 'This book is no longer available.']);
         }
 
-        // 3. Create Borrow Record
         BorrowedItem::create([
             'user_id' => $request->user_id,
             'book_id' => $request->book_id,
-            'borrowed_at' => now(),
+            'borrow_date' => now(), // <--- CORRECTED
             'due_date' => $request->due_date,
+            'status'=>'Borrowed',
         ]);
 
         // 4. Decrease Book Stock
@@ -124,10 +124,10 @@ class BorrowedItemsController extends Controller
         BorrowedItem::create([
             'user_id' => \Illuminate\Support\Facades\Auth::id(),
             'book_id' => $book->id,
-            'borrowed_at' => now(),
-            'due_date' => now()->addDays(14), 
+            'borrow_date' => now(), // <--- CORRECTED to match your database
+            'due_date' => now()->addDays(14),
+            'status'=> 'Borrowed',
         ]);
-
         // 5. Decrease Stock
         $book->decrement('available_copies');
 
