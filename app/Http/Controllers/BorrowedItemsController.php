@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Storeborrowed_itemsRequest;
-use App\Http\Requests\Updateborrowed_itemsRequest;
-use App\Models\borrowed_items;
 use App\Models\BorrowedItem;
+use App\Models\Books; 
+use App\Models\User;
+use Illuminate\Http\Request;
 
 class BorrowedItemsController extends Controller
 {
@@ -14,7 +14,7 @@ class BorrowedItemsController extends Controller
      */
     public function index()
     {
-        $borrowedItems = \App\Models\BorrowedItem::with(['books', 'user'])->get();
+        $borrowedItems = BorrowedItem::with(['book', 'user'])->latest()->get();
         return view('borrowed-items.index', compact('borrowedItems'));
     }
 
@@ -23,46 +23,79 @@ class BorrowedItemsController extends Controller
      */
     public function create()
     {
-        //
+        // Fetch all users
+        $users = User::all();
+        
+        // Fetch only books that have copies available
+        $books = Books::where('available_copies', '>', 0)->get();
+
+        return view('borrowed-items.create', compact('users', 'books'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Storeborrowed_itemsRequest $request)
+    public function store(Request $request)
     {
-        //
-    }
+        // 1. Validate
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'book_id' => 'required|exists:books,id',
+            'due_date' => 'required|date|after:today',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(BorrowedItem $borrowed_items)
-    {
-        //
-    }
+        // 2. Double check availability
+        $book = Books::findOrFail($request->book_id);
+        if ($book->available_copies < 1) {
+            return back()->withErrors(['book_id' => 'This book is no longer available.']);
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(BorrowedItem $borrowed_items)
-    {
-        //
+        // 3. Create Borrow Record
+        BorrowedItem::create([
+            'user_id' => $request->user_id,
+            'book_id' => $request->book_id,
+            'borrowed_at' => now(),
+            'due_date' => $request->due_date,
+        ]);
+
+        // 4. Decrease Book Stock
+        $book->decrement('available_copies');
+
+        return redirect()->route('borrowed-items.index')->with('success', 'Book issued successfully!');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Updateborrowed_itemsRequest $request, BorrowedItem $borrowed_items)
+    public function update(Request $request, BorrowedItem $borrowed_item)
     {
-        //
+        // Handle "Mark Returned"
+        if ($request->has('mark_returned')) {
+            $borrowed_item->update([
+                'returned_at' => now(),
+            ]);
+            
+            // Increase stock back
+            $borrowed_item->book->increment('available_copies');
+            
+            return back()->with('success', 'Item marked as returned.');
+        }
+
+        // Handle Due Date Update
+        if ($request->has('due_date')) {
+            $borrowed_item->update([
+                'due_date' => $request->due_date
+            ]);
+            return back()->with('success', 'Due date updated.');
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(BorrowedItem $borrowed_items)
+    public function destroy(BorrowedItem $borrowed_item)
     {
-        //
+        $borrowed_item->delete();
+        return back()->with('success', 'Record deleted.');
     }
 }

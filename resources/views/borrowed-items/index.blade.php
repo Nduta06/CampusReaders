@@ -328,6 +328,60 @@
             justify-content: center;
         }
     }
+.btn-update-status {
+    border-radius: 50px;
+    font-weight: 600;
+    padding: 0.4rem 1.1rem;
+    font-size: 0.95rem;
+    color: #fff;
+    background: #1a237e;
+    border: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.btn-update-status:hover {
+    background: #3949ab;
+    color: #fff;
+    text-decoration: none;
+}
+.card-custom {
+    background: #f5f5dc;
+    color: #111;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+.table thead th { color: #1a237e; }
+.table tbody td { color: #111; }
+.table-responsive { padding: 1rem; }
+.mt-3 { margin-top: 1rem !important; }
+
+.btn-issue-book {
+    background: linear-gradient(135deg, #1a237e 0%, #283593 100%); /* Subtle gradient */
+    color: white !important;
+    padding: 10px 24px;
+    border-radius: 50px; 
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(26, 35, 126, 0.2); /* Soft shadow */
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px; 
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.btn-issue-book:hover {
+    background: linear-gradient(135deg, #283593 0%, #3949ab 100%);
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 20px rgba(26, 35, 126, 0.3);
+}
+
+.btn-issue-book svg {
+    width: 20px;
+    height: 20px;
+}
 </style>
 
 <div class="container-fluid">
@@ -342,6 +396,17 @@
     <!-- Page Header -->
     <div class="page-header">
         <h1 class="page-title">Borrowed Items Management</h1>
+    <div class="row mb-4">
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <h3 class="fw-bold mb-0" style="color: #1a237e;">Borrowed Items</h3>
+        
+        <a href="{{ route('borrowed-items.create') }}" class="btn-issue-book">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Issue New Book
+        </a>
+        </div>
     </div>
 
     <!-- Borrowed Items Table -->
