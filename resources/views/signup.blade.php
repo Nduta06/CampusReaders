@@ -34,6 +34,34 @@
                 <div class="error-message" id="emailError"></div>
             </div>
 
+            <!-- Role Selection -->
+            <div class="form-group">
+                <label for="role">Account Type</label>
+                <div class="role-selection">
+                    <div class="role-option">
+                        <input type="radio" id="role_student" name="role" value="student" required>
+                        <label for="role_student" class="role-label">
+                            <div class="role-icon">🎓</div>
+                            <div class="role-info">
+                                <div class="role-title">Student</div>
+                                <div class="role-desc">Borrow books, make reservations</div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="role-option">
+                        <input type="radio" id="role_staff" name="role" value="staff" required>
+                        <label for="role_staff" class="role-label">
+                            <div class="role-icon">👨‍💼</div>
+                            <div class="role-info">
+                                <div class="role-title">Staff</div>
+                                <div class="role-desc">Manage books and library operations</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="error-message" id="roleError"></div>
+            </div>
+
             <div class="form-group">
                 <label for="password">Password</label>
                 <div class="input-icon">
@@ -72,6 +100,7 @@
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('password_confirmation').value;
+        const roleSelected = document.querySelector('input[name="role"]:checked');
         
         let isValid = true;
         
@@ -92,6 +121,13 @@
         if (!emailRegex.test(email)) {
             document.getElementById('emailError').textContent = 'Please enter a valid email address';
             document.getElementById('emailError').style.display = 'block';
+            isValid = false;
+        }
+        
+        // Role validation
+        if (!roleSelected) {
+            document.getElementById('roleError').textContent = 'Please select an account type';
+            document.getElementById('roleError').style.display = 'block';
             isValid = false;
         }
         
@@ -129,5 +165,113 @@
             errorElement.style.display = 'none';
         }
     });
+
+    // Role selection styling
+    document.querySelectorAll('.role-option input').forEach(radio => {
+        radio.addEventListener('change', function() {
+            // Remove selected class from all options
+            document.querySelectorAll('.role-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            // Add selected class to current option
+            this.closest('.role-option').classList.add('selected');
+            // Clear role error
+            document.getElementById('roleError').style.display = 'none';
+        });
+    });
 </script>
+@endsection
+
+@section('styles')
+<style>
+    .role-selection {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .role-option {
+        position: relative;
+    }
+
+    .role-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+    }
+
+    .role-label {
+        display: flex;
+        align-items: center;
+        padding: 16px;
+        border: 2px solid #e8dfca;
+        border-radius: 12px;
+        background: #fffaf0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        gap: 15px;
+    }
+
+    .role-label:hover {
+        border-color: #c8b8a0;
+        background: #fff;
+        transform: translateY(-1px);
+    }
+
+    .role-option.selected .role-label {
+        border-color: #8b7355;
+        background: #f9f5eb;
+        box-shadow: 0 4px 12px rgba(139, 115, 85, 0.15);
+    }
+
+    .role-icon {
+        font-size: 24px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #a08c6c 0%, #8b7355 100%);
+        border-radius: 10px;
+        color: white;
+    }
+
+    .role-info {
+        flex: 1;
+    }
+
+    .role-title {
+        font-weight: 600;
+        color: #8b7355;
+        margin-bottom: 4px;
+        font-size: 15px;
+    }
+
+    .role-desc {
+        font-size: 13px;
+        color: #a08c6c;
+        line-height: 1.4;
+    }
+
+    /* Responsive design for role selection */
+    @media (max-width: 480px) {
+        .role-label {
+            padding: 14px;
+            gap: 12px;
+        }
+
+        .role-icon {
+            font-size: 20px;
+            width: 36px;
+            height: 36px;
+        }
+
+        .role-title {
+            font-size: 14px;
+        }
+
+        .role-desc {
+            font-size: 12px;
+        }
+    }
+</style>
 @endsection

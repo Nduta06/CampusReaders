@@ -249,7 +249,6 @@
         <div class="login-footer">
             <div class="footer-links">
                 <a href="#">Forgot your password?</a>
-                <a href="#">Need help?</a>
             </div>
         </div>
     </div>
