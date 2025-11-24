@@ -57,13 +57,16 @@ class Catalogue extends Component
         $categories = Category::orderBy('name')->get();
 
         $books = Books::with('category')
-            ->where(function ($q) {
-                $q->where('title', 'like', "%{$this->search}%")
-                  ->orWhere('author', 'like', "%{$this->search}%")
-                  ->orWhere('ISBN', 'like', "%{$this->search}%")
-                  ->orWhere('edition', 'like', "%{$this->search}%")
-                  ->orWhere('publication_year', 'like', "%{$this->search}%");
+            ->when($this->search, function ($q) {
+                $q->where(function ($query) {
+                    $query->where('title', 'like', "%{$this->search}%")
+                    ->orWhere('author', 'like', "%{$this->search}%")
+                    ->orWhere('ISBN', 'like', "%{$this->search}%")
+                    ->orWhere('edition', 'like', "%{$this->search}%")
+                    ->orWhere('publication_year', 'like', "%{$this->search}%");
+                });
             })
+
             ->when($this->selectedCategory, fn($q) => 
                 $q->where('category_id', $this->selectedCategory)
             )

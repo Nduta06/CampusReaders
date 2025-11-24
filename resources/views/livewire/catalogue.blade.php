@@ -1,8 +1,8 @@
 <div class="p-4">
     <!-- Search + Filters -->
     <div class="flex flex-wrap gap-4 mb-4">
-        <input type="text" wire:model="search" placeholder="Search title, author, ISBN..." class="px-3 py-2 border rounded w-64">
-        <select wire:model="selectedCategory" class="px-3 py-2 border rounded">
+        <input type="text" wire:model.live="search" placeholder="Search title, author, ISBN..." class="px-3 py-2 border rounded w-64">
+        <select wire:model.live="selectedCategory" class="px-3 py-2 border rounded">
             <option value="">All Categories</option>
             @foreach ($categories as $category)
             <option value="{{ $category->id }}">
@@ -10,7 +10,7 @@
             </option>
             @endforeach
         </select>
-        <select wire:model="availability" class="px-3 py-2 border rounded">
+        <select wire:model.live="availability" class="px-3 py-2 border rounded">
             <option value="">Any Availability</option>
             <option value="available">Available Only</option>
         </select>
