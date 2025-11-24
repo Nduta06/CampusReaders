@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Storeborrowed_itemsRequest;
 use App\Http\Requests\Updateborrowed_itemsRequest;
 use App\Models\borrowed_items;
+use App\Models\BorrowedItem;
 
 class BorrowedItemsController extends Controller
 {
@@ -13,7 +14,8 @@ class BorrowedItemsController extends Controller
      */
     public function index()
     {
-        //
+        $borrowedItems = \App\Models\BorrowedItem::with(['books', 'user'])->get();
+        return view('borrowed-items.index', compact('borrowedItems'));
     }
 
     /**
@@ -35,7 +37,7 @@ class BorrowedItemsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(borrowed_items $borrowed_items)
+    public function show(BorrowedItem $borrowed_items)
     {
         //
     }
@@ -43,7 +45,7 @@ class BorrowedItemsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(borrowed_items $borrowed_items)
+    public function edit(BorrowedItem $borrowed_items)
     {
         //
     }
@@ -51,7 +53,7 @@ class BorrowedItemsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Updateborrowed_itemsRequest $request, borrowed_items $borrowed_items)
+    public function update(Updateborrowed_itemsRequest $request, BorrowedItem $borrowed_items)
     {
         //
     }
@@ -59,7 +61,7 @@ class BorrowedItemsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(borrowed_items $borrowed_items)
+    public function destroy(BorrowedItem $borrowed_items)
     {
         //
     }

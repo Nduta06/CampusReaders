@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -46,5 +47,11 @@ return new class extends Migration
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+    }
+
+    public function roles(): BelongsTo
+    {
+        // Specify 'roleId' as the foreign key
+        return $this->belongsTo(roles::class, 'roleId');
     }
 };

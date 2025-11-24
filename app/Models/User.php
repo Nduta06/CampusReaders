@@ -2,87 +2,59 @@
 
 namespace App\Models;
 
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo; // <--- Import this
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\MessagingLog;
 
 class User extends Authenticatable
 {
-    use HasFactory, SoftDeletes, Notifiable;
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory, Notifiable;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
         'name',
         'email',
         'password',
-        'role_id',
-        
+        'roleId',
     ];
 
-
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-    ];
-
-    // Relationships
-    public function roles(): BelongsTo
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
     {
-        return $this->belongsTo(roles::class);
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 
-    public function reservations(): HasMany
+    /**
+     * Relationship to the Roles model
+     */
+    public function role(): BelongsTo
     {
-        return $this->hasMany(reservations::class);
-    }
-
-    public function waitlists(): HasMany
-    {
-        return $this->hasMany(waitlists::class);
-    }
-
-    public function borrowed_items(): HasMany
-    {
-        return $this->hasMany(borrowed_items::class, 'user_id');
-    }
-
-
-    public function fines(): HasMany
-    {
-        return $this->hasMany(fines::class);
-    }
-
-    public function messaging_logs(): HasMany
-    {
-        return $this->hasMany(messaging_logs::class);
-    }
-
-    // Authorization helper methods
-    public function isAdmin(): bool
-    {
-        return $this->role->name === 'admin';
-    }
-
-    public function isStaff(): bool
-    {
-        return $this->role->name === 'staff';
-    }
-
-    public function isGuest(): bool
-    {
-        return $this->role->name === 'guest';
-    }
-
-    public function hasRole(string $role): bool
-    {
-        return $this->role->name === $role;
+        // We specify 'roleId' because the DB column is camelCase
+        return $this->belongsTo(Role::class, 'role_id');
     }
 }

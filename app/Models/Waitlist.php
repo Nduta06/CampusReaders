@@ -6,27 +6,37 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class messaging_logs extends Model
+class Waitlist extends Model
 {
     
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'type',
-        'recipient',
-        'content',
-        'sent_at',
+        'book_id',
+        'position',
+        'joined_at',
         'status',
     ];
 
     protected $casts = [
-        'sent_at' => 'datetime',
+        'joined_at' => 'datetime',
     ];
 
     // Relationships
-    public function User(): BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function book(): BelongsTo
+    {
+        return $this->belongsTo(Books::class);
+    }
+
+    // Helper method
+    public function isActive(): bool
+    {
+        return $this->status === 'Active';
     }
 }

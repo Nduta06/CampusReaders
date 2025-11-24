@@ -1,26 +1,22 @@
 @extends('layout')
 
-@section('title', 'Sign Up - Library System')
+@section('title', 'Sign Up - CampusReaders')
 
 @section('content')
 <div class="auth-container">
     <div class="auth-card">
-        <div class="logo">
-            <div class="logo-circle">L</div>
-        </div>
-        
         <div class="auth-header">
             <h1>Create Account</h1>
-            <p>Join our library community today</p>
+            <p>Join CampusReaders today</p>
         </div>
 
-        <form id="signupForm" method="POST" action="/signup">
+        <form method="POST" action="{{ route('signup') }}" id="signupForm">
             @csrf
             <div class="form-group">
                 <label for="name">Full Name</label>
                 <div class="input-icon">
-                    <input type="text" id="name" name="name" class="form-control" placeholder="Enter your full name" required>
-                    <i>👤</i>
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="Enter your full name" value="{{ old('name') }}" required autofocus>
                 </div>
                 <div class="error-message" id="nameError"></div>
             </div>
@@ -28,8 +24,8 @@
             <div class="form-group">
                 <label for="email">Email Address</label>
                 <div class="input-icon">
-                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" required>
-                    <i>📧</i>
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" value="{{ old('email') }}" required>
                 </div>
                 <div class="error-message" id="emailError"></div>
             </div>
@@ -39,7 +35,7 @@
                 <label for="role">Account Type</label>
                 <div class="role-selection">
                     <div class="role-option">
-                        <input type="radio" id="role_student" name="role" value="student" required>
+                        <input type="radio" id="role_student" name="role" value="student" {{ old('role') == 'student' ? 'checked' : '' }} required>
                         <label for="role_student" class="role-label">
                             <div class="role-icon">🎓</div>
                             <div class="role-info">
@@ -49,7 +45,7 @@
                         </label>
                     </div>
                     <div class="role-option">
-                        <input type="radio" id="role_staff" name="role" value="staff" required>
+                        <input type="radio" id="role_staff" name="role" value="staff" {{ old('role') == 'staff' ? 'checked' : '' }} required>
                         <label for="role_staff" class="role-label">
                             <div class="role-icon">👨‍💼</div>
                             <div class="role-info">
@@ -65,11 +61,8 @@
             <div class="form-group">
                 <label for="password">Password</label>
                 <div class="input-icon">
+                    <i class="fas fa-lock"></i>
                     <input type="password" id="password" name="password" class="form-control" placeholder="Create a password" required>
-                    <i>🔒</i>
-                </div>
-                <div class="password-requirements">
-                    Must be at least 8 characters with letters and numbers
                 </div>
                 <div class="error-message" id="passwordError"></div>
             </div>
@@ -77,18 +70,18 @@
             <div class="form-group">
                 <label for="password_confirmation">Confirm Password</label>
                 <div class="input-icon">
+                    <i class="fas fa-lock"></i>
                     <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" placeholder="Confirm your password" required>
-                    <i>🔒</i>
                 </div>
                 <div class="error-message" id="confirmPasswordError"></div>
             </div>
 
             <button type="submit" class="btn-auth">Create Account</button>
-        </form>
 
-        <div class="auth-prompt">
-            Already have an account? <a href="/login">Sign in</a>
-        </div>
+            <div class="auth-prompt">
+                Already have an account? <a href="{{ route('login') }}">Sign in here</a>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -152,7 +145,7 @@
         }
     });
 
-    // Real-time validation
+    // Real-time validation for password confirmation
     document.getElementById('password_confirmation').addEventListener('input', function() {
         const password = document.getElementById('password').value;
         const confirmPassword = this.value;
@@ -166,8 +159,27 @@
         }
     });
 
-    // Role selection styling
+    // Real-time password strength validation
+    document.getElementById('password').addEventListener('input', function() {
+        const password = this.value;
+        const errorElement = document.getElementById('passwordError');
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+        
+        if (!passwordRegex.test(password) && password.length > 0) {
+            errorElement.textContent = 'Password must be at least 8 characters with letters and numbers';
+            errorElement.style.display = 'block';
+        } else {
+            errorElement.style.display = 'none';
+        }
+    });
+
+    // Role selection styling and validation
     document.querySelectorAll('.role-option input').forEach(radio => {
+        // Set initial selected state based on checked status
+        if (radio.checked) {
+            radio.closest('.role-option').classList.add('selected');
+        }
+        
         radio.addEventListener('change', function() {
             // Remove selected class from all options
             document.querySelectorAll('.role-option').forEach(option => {
@@ -250,6 +262,13 @@
         font-size: 13px;
         color: #a08c6c;
         line-height: 1.4;
+    }
+
+    .error-message {
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 5px;
+        display: none;
     }
 
     /* Responsive design for role selection */

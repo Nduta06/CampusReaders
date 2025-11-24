@@ -5,26 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\Books;
 
-class roles extends Model
+class Category extends Model
 {
     
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'description',
+        'name', 'description'
     ];
 
     // Relationships
-    public function User(): HasMany
+    public function books(): HasMany
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(Books::class);
     }
 
     // Helper method
-    public function users_count(): int
+    public function books_count(): int
     {
-        return $this->users()->count();
+        return $this->books()->count();
     }
 }

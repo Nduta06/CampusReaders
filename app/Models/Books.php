@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Database\Factories\BooksFactory; 
+use App\Models\Reservation;
+ // <--- 1. Import the Factory
 
-class books extends Model
+class Books extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -24,25 +27,34 @@ class books extends Model
         'manual_sync_flag',
     ];
 
-    // Relationships
-    public function categories(): BelongsTo
+    
+    protected static function newFactory()
     {
-        return $this->belongsTo(categories::class);
+        return BooksFactory::new();
+    }
+    // ------------------------------------------------------------------
+
+    // ------------------------------------------------------------------
+
+    // Relationships
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 
     public function reservations(): HasMany
     {
-        return $this->hasMany(reservations::class);
+        return $this->hasMany(Reservation::class);
     }
 
     public function waitlists(): HasMany
     {
-        return $this->hasMany(waitlists::class);
+        return $this->hasMany(Waitlist::class);
     }
 
     public function borrowed_Items(): HasMany
     {
-        return $this->hasMany(borrowed_Items::class);
+        return $this->hasMany(BorrowedItem::class);
     }
 
     // Helper methods
