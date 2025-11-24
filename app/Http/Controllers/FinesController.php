@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Fine;
+use App\Models\BorrowedItem; // Import BorrowedItem
 use Illuminate\Http\Request;
 use Stripe\Stripe;
 use Stripe\Checkout\Session as StripeSession;
+use Carbon\Carbon; // Import Carbon
 
 class FinesController extends Controller
 {
@@ -14,8 +16,58 @@ class FinesController extends Controller
      */
     public function index()
     {
+        // 1. Calculate fines for any currently overdue items before showing the list
+        $this->calculateFinesForOverdueItems();
+
+        // 2. Fetch all fines to display
         $fines = Fine::with(['user', 'book'])->orderBy('created_at', 'desc')->get();
+        
         return view('fines.index', compact('fines'));
+    }
+
+    /**
+     * Helper to generate fines for overdue books on the fly
+     */
+    private function calculateFinesForOverdueItems()
+    {
+        $dailyRate = 1.00; // $1.00 per day
+
+        // Find all active loans (not returned) that are past their due date
+        $overdueItems = BorrowedItem::whereNull('return_date')
+            ->where('due_date', '<', now())
+            ->get();
+
+        foreach ($overdueItems as $item) {
+            $dueDate = Carbon::parse($item->due_date);
+            $daysOverdue = now()->diffInDays($dueDate);
+
+            // Only charge if at least 1 day overdue
+            if ($daysOverdue < 1) continue;
+
+            $fineAmount = $daysOverdue * $dailyRate;
+
+            // Check if a fine record already exists for this transaction
+            $existingFine = Fine::where('borrowed_item_id', $item->id)->first();
+
+            if ($existingFine) {
+                // Update existing fine if the amount has increased (more days passed)
+                if ($existingFine->amount_due < $fineAmount && $existingFine->status !== 'Paid') {
+                    $existingFine->update([
+                        'amount_due' => $fineAmount,
+                    ]);
+                }
+            } else {
+                // Create new fine record
+                Fine::create([
+                    'user_id' => $item->user_id,
+                    'borrowed_item_id' => $item->id,
+                    'amount_due' => $fineAmount,
+                    'amount_paid' => 0,
+                    'incurred_on' => now(),
+                    'status' => 'Unpaid'
+                ]);
+            }
+        }
     }
 
     /**
@@ -81,29 +133,11 @@ class FinesController extends Controller
         return redirect()->route('profile')->with('success', 'Fine paid successfully!');
     }
 
-    /**
-     * Show the form for creating a new resource (not needed, leave empty).
-     */
     public function create() { }
-
-    /**
-     * Store a newly created resource (not needed, leave empty).
-     */
     public function store(Request $request) { }
-
-    /**
-     * Display the specified resource (optional).
-     */
     public function show(Fine $fine) { }
-
-    /**
-     * Show the form for editing the specified resource (optional).
-     */
     public function edit(Fine $fine) { }
 
-    /**
-     * Update the specified resource (optional, e.g., mark paid manually).
-     */
     public function update(Request $request, Fine $fine)
     {
         if ($request->has('mark_paid')) {
@@ -116,9 +150,6 @@ class FinesController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Fine $fine)
     {
         $fine->delete();

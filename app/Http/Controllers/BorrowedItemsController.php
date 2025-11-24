@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BorrowedItem;
 use App\Models\Books; 
 use App\Models\User;
+use App\Models\Fine; // Import Fine model
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,10 +13,10 @@ class BorrowedItemsController extends Controller
 {
     public function index()
     {
-        // FIXED: Only get items where 'return_date' is NULL (Active Loans)
-        // This ensures marked items disappear from the list immediately.
+        // FIXED: Filter to only show items where 'return_date' is NULL (Active Loans)
+        // This ensures that once you mark it returned, it disappears from this list.
         $borrowedItems = BorrowedItem::with(['book', 'user'])
-            ->whereNull('return_date')
+            ->whereNull('return_date') 
             ->latest()
             ->get();
 
@@ -59,14 +60,37 @@ class BorrowedItemsController extends Controller
     {
         // Handle "Mark Returned"
         if ($request->has('mark_returned')) {
+            
+            // --- FINE CALCULATION LOGIC ---
+            // If today is after the due date, calculate fine immediately
+            if ($borrowed_item->due_date < now()) {
+                $daysOverdue = now()->diffInDays($borrowed_item->due_date);
+                
+                // Only charge if at least 1 day overdue
+                if ($daysOverdue > 0) {
+                    $fineAmount = $daysOverdue * 1.00; // $1.00 per day
+
+                    Fine::create([
+                        'user_id' => $borrowed_item->user_id,
+                        'borrowed_item_id' => $borrowed_item->id,
+                        'amount_due' => $fineAmount,
+                        'amount_paid' => 0,
+                        'incurred_on' => now(),
+                        'status' => 'Unpaid'
+                    ]);
+                }
+            }
+            // -----------------------------
+
             $borrowed_item->update([
-                'return_date' => now(), // FIXED: Matches DB column 'return_date'
+                'return_date' => now(), // FIXED: using 'return_date' to match DB
                 'status' => 'Returned'
             ]);
             
+            // Increase stock back
             $borrowed_item->book->increment('available_copies');
             
-            return back()->with('success', 'Item marked as returned.');
+            return back()->with('success', 'Item marked as returned. Stock updated.');
         }
 
         // Handle Due Date Update
