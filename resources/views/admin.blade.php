@@ -1,61 +1,82 @@
-
 @extends('layout')
-
 @section('title', 'Admin - Manage Books')
-
 @section('content')
-<div class="auth-container">
-    <div class="auth-card" style="max-width:900px;width:100%;">
-        <div class="auth-header">
-            <h1>Manage Books</h1>
-            <p>Admin panel for book management</p>
+<div class="container">
+    <div class="page-header">
+        <h1 class="page-title">Manage Books</h1>
+        <p class="page-subtitle">View, add, edit and manage your library's book collection</p>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Book Collection</h2>
+            <a href="{{ route('books.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add New Book
+            </a>
+        </div>
+        
+        <div class="card-body">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>ISBN</th>
+                            <th>Edition</th>
+                            <th>Year</th>
+                            <th>Available</th>
+                            <th style="width: 180px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($books as $book)
+                        <tr>
+                            <td>
+                                <strong>{{ $book->title }}</strong>
+                            </td>
+                            <td>{{ $book->author }}</td>
+                            <td>{{ $book->ISBN }}</td>
+                            <td>{{ $book->edition }}</td>
+                            <td>{{ $book->publication_year }}</td>
+                            <td>
+                                <span class="badge {{ $book->available_copies > 0 ? 'badge-success' : 'badge-danger' }}">
+                                    {{ $book->available_copies }} / {{ $book->total_copies }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="table-actions">
+                                    <a href="{{ route('books.edit', $book->id) }}" class="btn btn-secondary btn-sm">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <form action="{{ route('books.destroy', $book->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this book?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="7" class="table-empty">
+                                <i class="fas fa-book" style="font-size: 48px; opacity: 0.3; display: block; margin-bottom: 12px;"></i>
+                                No books found in the system.
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <!-- Add Book Button -->
-        <div style="text-align:right;margin-bottom:20px;">
-            <a href="{{ route('books.create') }}" class="btn-auth" style="width:auto;display:inline-block;">Add New Book</a>
+        @if(isset($books) && $books->hasPages())
+        <div class="card-footer">
+            {{ $books->links() }}
         </div>
-
-        <!-- Books Table -->
-        <div style="overflow-x:auto;">
-        <table style="width:100%;border-collapse:collapse;">
-            <thead>
-                <tr style="background:#f5f1e6;">
-                    <th style="padding:10px 8px;border-bottom:1px solid #e8dfca;">Title</th>
-                    <th style="padding:10px 8px;border-bottom:1px solid #e8dfca;">Author</th>
-                    <th style="padding:10px 8px;border-bottom:1px solid #e8dfca;">ISBN</th>
-                    <th style="padding:10px 8px;border-bottom:1px solid #e8dfca;">Edition</th>
-                    <th style="padding:10px 8px;border-bottom:1px solid #e8dfca;">Year</th>
-                    <th style="padding:10px 8px;border-bottom:1px solid #e8dfca;">Available</th>
-                    <th style="padding:10px 8px;border-bottom:1px solid #e8dfca;">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($books as $book)
-                <tr>
-                    <td style="padding:8px;">{{ $book->title }}</td>
-                    <td style="padding:8px;">{{ $book->author }}</td>
-                    <td style="padding:8px;">{{ $book->ISBN }}</td>
-                    <td style="padding:8px;">{{ $book->edition }}</td>
-                    <td style="padding:8px;">{{ $book->publication_year }}</td>
-                    <td style="padding:8px;">{{ $book->available_copies }} / {{ $book->total_copies }}</td>
-                    <td style="padding:8px;">
-                        <a href="{{ route('books.edit', $book->id) }}" class="btn-auth" style="width:auto;padding:6px 12px;font-size:13px;display:inline-block;">Edit</a>
-                        <form action="{{ route('books.destroy', $book->id) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn-auth" style="width:auto;padding:6px 12px;font-size:13px;background:#d32f2f;margin-left:5px;">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="7" style="text-align:center;padding:20px;color:#a08c6c;">No books found.</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-        </div>
+        @endif
     </div>
 </div>
 @endsection

@@ -1,18 +1,5 @@
-
-<!--begin::Footer-->
 <footer class="app-footer">
-  <!--begin::To the end-->
-  <div class="float-end d-none d-sm-inline">
-    Version 0.0.1
-  </div>
-  <!--end::To the end-->
-  
-  <!--begin::Copyright-->
-  <strong>
-    Copyright &copy; {{ date('Y') }}&nbsp;
-    <a href="#" class="text-decoration-none">CampusReaders</a>.
-  </strong>
-  All rights reserved.
-  <!--end::Copyright-->
+    <div>
+        <strong>&copy; 2025 CampusReaders.</strong> All rights reserved.
+    </div>
 </footer>
-<!--end::Footer-->

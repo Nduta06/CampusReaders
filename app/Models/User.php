@@ -55,6 +55,6 @@ class User extends Authenticatable
     public function role(): BelongsTo
     {
         // We specify 'roleId' because the DB column is camelCase
-        return $this->belongsTo(Role::class, 'role_id');
+        return $this->belongsTo(Role::class, 'roleId');
     }
 }
