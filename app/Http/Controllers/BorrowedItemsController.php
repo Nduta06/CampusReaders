@@ -6,6 +6,7 @@ use App\Models\BorrowedItem;
 use App\Models\Books; 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BorrowedItemsController extends Controller
 {
@@ -97,5 +98,39 @@ class BorrowedItemsController extends Controller
     {
         $borrowed_item->delete();
         return back()->with('success', 'Record deleted.');
+    }
+
+    public function borrow(Request $request, $bookId)
+    {
+        // 1. Find the book
+        $book = Books::findOrFail($bookId);
+
+        // 2. Check if copies are available
+        if ($book->available_copies < 1) {
+            return back()->withErrors(['error' => 'Sorry, this book is currently out of stock.']);
+        }
+
+        // 3. Check if user already has this book (Optional safety check)
+        $existingLoan = BorrowedItem::where('user_id', \Illuminate\Support\Facades\Auth::id())
+            ->where('book_id', $book->id)
+            ->whereNull('returned_at')
+            ->exists();
+
+        if ($existingLoan) {
+            return back()->withErrors(['error' => 'You already have an active loan for this book.']);
+        }
+
+        // 4. Create the Borrow Record
+        BorrowedItem::create([
+            'user_id' => \Illuminate\Support\Facades\Auth::id(),
+            'book_id' => $book->id,
+            'borrowed_at' => now(),
+            'due_date' => now()->addDays(14), 
+        ]);
+
+        // 5. Decrease Stock
+        $book->decrement('available_copies');
+
+        return redirect()->route('catalogue')->with('success', 'You have successfully borrowed: ' . $book->title);
     }
 }

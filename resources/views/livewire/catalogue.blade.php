@@ -5,9 +5,22 @@
             <p class="page-subtitle">Browse and search our complete library collection</p>
         </div>
 
+        {{-- Success Message --}}
+        @if (session('success'))
+            <div class="alert alert-success mb-4" style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; border: 1px solid #c3e6cb;">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        {{-- Error Message --}}
+        @if (session('error'))
+            <div class="alert alert-danger mb-4" style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; border: 1px solid #f5c6cb;">
+                {{ session('error') }}
+            </div>
+        @endif
+
         <div class="card">
             <div class="card-body">
-                <!-- Search and Filters -->
                 <div class="filter-bar">
                     <input 
                         type="text" 
@@ -27,9 +40,8 @@
                     </select>
                 </div>
 
-                <!-- Books Table -->
                 <div class="table-wrapper">
-                    <table>
+                    <table class="table">
                         <thead>
                             <tr>
                                 <th wire:click="sortBy('title')" style="cursor: pointer;">
@@ -51,6 +63,8 @@
                                 <th wire:click="sortBy('available_copies')" style="cursor: pointer;">
                                     Available <i class="fas fa-sort"></i>
                                 </th>
+                                {{-- ADDED: Action Column Header --}}
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -64,19 +78,37 @@
                                 <td>{{ $book->category->name }}</td>
                                 <td>
                                     @if($book->available_copies > 0)
-                                        <span class="badge badge-success">
+                                        <span class="badge badge-success" style="background: #28a745; color: white; padding: 5px 10px; border-radius: 20px; font-size: 0.8em;">
                                             {{ $book->available_copies }} Available
                                         </span>
                                     @else
-                                        <span class="badge badge-danger">
+                                        <span class="badge badge-danger" style="background: #dc3545; color: white; padding: 5px 10px; border-radius: 20px; font-size: 0.8em;">
                                             Out of Stock
                                         </span>
+                                    @endif
+                                </td>
+                                {{-- ADDED: Action Column Body --}}
+                                <td>
+                                    @if($book->available_copies > 0)
+                                        <form action="{{ route('books.borrow', $book->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" 
+                                                onclick="return confirm('Confirm borrowing: {{ $book->title }}?')"
+                                                class="btn btn-primary btn-sm"
+                                                style="background: #1a237e; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer;">
+                                                Borrow
+                                            </button>
+                                        </form>
+                                    @else
+                                        <button disabled style="background: #e0e0e0; color: #9e9e9e; border: none; padding: 5px 15px; border-radius: 4px; cursor: not-allowed;">
+                                            Waitlist
+                                        </button>
                                     @endif
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" class="table-empty">
+                                <td colspan="8" class="table-empty" style="text-align: center; padding: 40px; color: #666;">
                                     <i class="fas fa-search" style="font-size: 48px; opacity: 0.3; display: block; margin-bottom: 12px;"></i>
                                     No books found matching your criteria.
                                 </td>

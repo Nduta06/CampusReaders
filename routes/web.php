@@ -48,6 +48,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])
         ->name('profile');
 
+    Route::post('/books/{book}/borrow', [BorrowedItemsController::class, 'borrow'])
+        ->name('books.borrow');
+
     Route::post('/profile/renew/{record}', [ProfileController::class, 'renew'])
         ->name('profile.renew');
 
