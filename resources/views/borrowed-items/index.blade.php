@@ -356,36 +356,9 @@
 .table tbody td { color: #111; }
 .table-responsive { padding: 1rem; }
 .mt-3 { margin-top: 1rem !important; }
-
-.btn-issue-book {
-    background: linear-gradient(135deg, #1a237e 0%, #283593 100%); /* Subtle gradient */
-    color: white !important;
-    padding: 10px 24px;
-    border-radius: 50px; 
-    font-weight: 600;
-    box-shadow: 0 4px 15px rgba(26, 35, 126, 0.2); /* Soft shadow */
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px; 
-    text-decoration: none;
-    border: 1px solid rgba(255,255,255,0.1);
-}
-
-.btn-issue-book:hover {
-    background: linear-gradient(135deg, #283593 0%, #3949ab 100%);
-    transform: translateY(-2px); 
-    box-shadow: 0 6px 20px rgba(26, 35, 126, 0.3);
-}
-
-.btn-issue-book svg {
-    width: 20px;
-    height: 20px;
-}
 </style>
 
 <div class="container-fluid">
-    <!-- Breadcrumb -->
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
@@ -393,23 +366,15 @@
         </ol>
     </nav>
 
-    <!-- Page Header -->
     <div class="page-header">
         <h1 class="page-title">Borrowed Items Management</h1>
-    <div class="row mb-4">
-    <div class="col-12 d-flex justify-content-between align-items-center">
-        <h3 class="fw-bold mb-0" style="color: #1a237e;">Borrowed Items</h3>
-        
-        <a href="{{ route('borrowed-items.create') }}" class="btn-issue-book">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Issue New Book
-        </a>
+        <div class="row mb-4">
+            <div class="col-12 d-flex justify-content-between align-items-center">
+                {{-- REMOVED: Issue New Book Button --}}
+            </div>
         </div>
     </div>
 
-    <!-- Borrowed Items Table -->
     <div class="card">
         <div class="card-body">
             <div class="table-container">
@@ -429,7 +394,8 @@
                     <tbody>
                         @forelse($borrowedItems as $item)
                             @php
-                                $isOverdue = !$item->returned_at && $item->due_date && $item->due_date->isPast();
+                                // FIXED: Use 'return_date' instead of 'returned_at'
+                                $isOverdue = !$item->return_date && $item->due_date && $item->due_date->isPast();
                             @endphp
                             <tr>
                                 <td>
@@ -441,7 +407,8 @@
                                 <td>{{ $item->user->name ?? 'N/A' }}</td>
                                 <td>
                                     <span class="date-text">
-                                        {{ $item->borrowed_at ? $item->borrowed_at->format('M d, Y H:i') : '-' }}
+                                        {{-- FIXED: Use 'borrow_date' --}}
+                                        {{ $item->borrow_date ? $item->borrow_date->format('M d, Y H:i') : '-' }}
                                     </span>
                                 </td>
                                 <td>
@@ -454,11 +421,12 @@
                                 </td>
                                 <td>
                                     <span class="date-text">
-                                        {{ $item->returned_at ? $item->returned_at->format('M d, Y H:i') : '-' }}
+                                        {{-- FIXED: Use 'return_date' --}}
+                                        {{ $item->return_date ? $item->return_date->format('M d, Y H:i') : '-' }}
                                     </span>
                                 </td>
                                 <td>
-                                    @if($item->returned_at)
+                                    @if($item->return_date)
                                         <span class="status-badge status-returned">
                                             <i class="bi bi-check-circle"></i>
                                             Returned
@@ -477,8 +445,7 @@
                                 </td>
                                 <td>
                                     <div class="action-group">
-                                        @if(!$item->returned_at)
-                                        <!-- Mark as Returned -->
+                                        @if(!$item->return_date)
                                         <div class="action-row">
                                             <form action="{{ route('borrowed-items.update', $item) }}" method="POST" style="margin: 0; flex: 1;">
                                                 @csrf
@@ -491,7 +458,6 @@
                                         </div>
                                         @endif
 
-                                        <!-- Update Due Date -->
                                         <div class="action-row">
                                             <form action="{{ route('borrowed-items.update', $item) }}" method="POST" style="margin: 0; display: flex; gap: 8px; flex: 1;">
                                                 @csrf
@@ -509,7 +475,6 @@
                                             </form>
                                         </div>
 
-                                        <!-- Delete -->
                                         <div class="action-row">
                                             <form action="{{ route('borrowed-items.destroy', $item) }}" method="POST" style="margin: 0; flex: 1;" onsubmit="return confirm('Are you sure you want to delete this borrowed item? This action cannot be undone.');">
                                                 @csrf
@@ -544,8 +509,8 @@
                 Showing {{ $borrowedItems->count() }} {{ Str::plural('item', $borrowedItems->count()) }}
             </span>
             <span class="stats-text">
-                Active Loans: {{ $borrowedItems->whereNull('returned_at')->count() }} | 
-                Returned: {{ $borrowedItems->whereNotNull('returned_at')->count() }}
+                {{-- FIXED: Use 'return_date' --}}
+                Active Loans: {{ $borrowedItems->whereNull('return_date')->count() }}
             </span>
         </div>
         @endif
